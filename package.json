@@ -1,5 +1,5 @@
 {
-  "name": "release_notes_generator",
+  "name": "JIRA_release_notes_generator",
   "version": "0.0.1",
   "description": "",
   "main": "server.js",
