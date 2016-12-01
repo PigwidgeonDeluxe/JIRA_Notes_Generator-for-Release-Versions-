@@ -106,6 +106,7 @@ app.post('/response', function(req, res, next) {
 
     var project_options;
     var project_id;
+
     /// callback functions ///
 
     id_callback = function(response) {
@@ -165,7 +166,7 @@ app.post('/response', function(req, res, next) {
 
     }
 
-    //function that retrieves the data for all the versions
+    //first part of a recursive function that retrieves the data for all the versions
     function table_data_retrieval(response, i){
 
         //specify options for table data retrieval
@@ -173,23 +174,20 @@ app.post('/response', function(req, res, next) {
             host: 'ondhdp.atlassian.net',
             auth: user_response["username"] + ":" + user_response["password"]
         };
-        //nsole.log(table_options);
-        /*
-        for (x = 0; x < release_versions.length; x++){
 
-            table_data[release_versions[x]] = request_tabledata(response, table_options, project_id, x);
-
-        }*/
-        if (i == release_versions.length - 1){
+        //if this is the last recurse, send the data and exit the function
+        if (i == release_versions.length){
             //return the final array with all the tables and their respective data
             //return table_data;
             send_data(table_data);
-        } else {
+            return;
+        } else { //otherwise continue the recursive function
             request_tabledata(response, table_options, project_id, i);
-            console.log(table_data);
+            //console.log(table_data);
         }
     }
 
+    //second part of a recursive function that retrieves data for the current version being recursed
     function request_tabledata(response, table_options, project_id, i){
         var parsedbody;
         //create a path for each different version
@@ -207,7 +205,7 @@ app.post('/response', function(req, res, next) {
 
             //the whole response has been recieved
             response.on('end', function() {
-                console.log("Response recieved, connection successful.");
+                console.log("Response recieved, connection successful: " + release_versions[i]);
                 console.log("Parsing recieved body for data.");
                 //parse the body
                 parsedbody = parse_body(body);
@@ -216,7 +214,6 @@ app.post('/response', function(req, res, next) {
                 //get all required data for current table
                 
                 table_data[release_versions[i]] = jsonformat(parsedbody);
-                console.log("rc" + table_data);
                 table_data_retrieval(response, (i + 1));
                 //return finalbody;
             });
@@ -227,9 +224,6 @@ app.post('/response', function(req, res, next) {
             console.log(err);
             res.send(err);
         })
-
-
-
         
     }
 
@@ -241,12 +235,8 @@ app.post('/response', function(req, res, next) {
                 release_data: table_data,
                 releases: release_versions
             });
-
         //}) */
     }
-
-
-
 
 
     ///acquisition functions/// -- created for sequential execution and formatting
@@ -270,6 +260,7 @@ app.post('/response', function(req, res, next) {
     }
 
     function data_acquire(response) {
+
         //get the data for each version
         table_data_retrieval(response, 0);
     }
