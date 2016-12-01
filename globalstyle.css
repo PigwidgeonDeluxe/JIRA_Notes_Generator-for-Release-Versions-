@@ -1,0 +1,47 @@
+/*formatting for all bodies. margin 0 auto centers the body */
+body {
+    position: fixed;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #263238;
+    font-family: normal x-small verdana, arial, helvetica, sans-serif;
+    color: #b2ccd6;
+}
+
+/*formatting for main-table div (index.ejs)*/
+#main-table{
+    display: block;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+/*formatting for tableForm (homepage)*/
+#tableForm{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+input,
+textarea {
+    padding: 5px;
+    border: solid 1px #dcdcdc;
+    transition: box-shadow 0.3s, border 0.3s;
+    background-color: #263238;
+    color: #89ddff;
+}
+
+input,
+textarea.focus {
+    border: solid 1px #707070;
+    box-shadow: 0 0 1px 1px #969696;
+}
+
+.button {
+    color: #89ddff;
+}

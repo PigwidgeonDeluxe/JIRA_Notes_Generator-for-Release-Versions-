@@ -1,0 +1,17 @@
+{
+  "name": "release_notes_generator",
+  "version": "0.0.9",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jeffrey Xu",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "jquery.tabulator": "^2.8.0"
+  }
+}

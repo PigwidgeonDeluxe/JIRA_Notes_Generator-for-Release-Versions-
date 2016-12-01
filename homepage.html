@@ -1,0 +1,67 @@
+<html>
+<script src="jquery-3.1.1.min.js"></script>
+<head>
+<link rel="stylesheet" type="text/css" href="globalstyle.css">
+</head>
+<body>
+    <center>
+
+        <!--submission form table-->
+        <form id="tableForm" action="/response" onsubmit="return validateForm()"" method="POST" >
+                    <header>
+                        Release Version Management
+                    </header>
+                <table>
+                    <!-- Clear All button -->
+                    <tr>
+                        <input type="button" class="button" id="clear_all" name="clear_all" value="Clear All">
+                    </tr>
+                    <!--username query-->
+                    <tr>
+                        <td>Username:</td>
+                        <td> <input type="text" id="user_query" name="user_query" style="width: 100%"></td>
+                    </tr>
+                    <!--password query-->
+                    <tr>
+                        <td>Password:</td>
+                        <td> <input type="password" id="pw_query" name="pw_query" style="width: 100%"></td>
+                    </tr>
+                    <!--project key query-->
+                    <tr>
+                        <td>Project Key (i.e. DCRM):</td>
+                        <td> <input type="text" id="pk_query" name="pk_query" style="width: 100%"></td>
+                    </tr>
+
+                </table>
+                <!--submit button-->
+                <p>
+                    <td colspan="3"><input type="submit" class="button" style="height:30px;width:125px" value="Submit"></td>
+                </p>
+
+        </form>
+    </center>
+</body>
+<script>
+//alert the user if any submission field is blank
+function validateForm() {
+    var username = document.forms["tableForm"]["user_query"].value;
+    var password = document.forms["tableForm"]["pw_query"].value;
+    var project = document.forms["tableForm"]["pk_query"].value;
+    if (username == "" || password == "" || project == "") {
+        alert("Required submission fields must be filled out.");
+        return false;
+    }
+}
+
+//jQuery script to clear all fields
+    $(document).ready(function() {
+        //clear_all button clears all 
+        $("#clear_all").click(function() {
+            $("#user_query").val("");
+            $("#pw_query").val("");
+            $("#pk_query").val("");
+        });
+    }); 
+</script>
+
+</html>

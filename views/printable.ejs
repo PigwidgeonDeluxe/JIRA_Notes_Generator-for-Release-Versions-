@@ -1,0 +1,54 @@
+<html>
+<head>
+    <script src="jquery-3.1.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="ejs.js"></script>
+    <link rel="stylesheet" href="jquery-ui.min.css">
+    <script src="jquery.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    
+    <!--css for avoiding table row splitting when printing-->
+<style type="text/css">
+    table { page-break-inside:auto }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+    thead { display:table-header-group }
+    tfoot { display:table-footer-group }
+</style>
+
+</head>
+
+<body>
+    <!--table-->
+    <div id="main-table"></div>
+</body>
+
+<script type="text/javascript">
+    //run script once the document is fully loaded
+    $(document).ready(function() {
+        //define some data from sent json data from nodejs server
+        var tabledata = <%- JSON.stringify(jsondata) %>
+        var columndata = <%- JSON.stringify(columns['col']) %>
+        var content = "<table border='1'>"
+
+        //create the column names
+        content += '<tr>';
+        for (i = 1; i < columndata.length; i++) {
+            content += '<td>' + JSON.stringify(columndata[i]).replace(/['"]+/g, '') + '</td>';
+        }
+        content += '</tr>';
+
+        //populate and create the column cells/data
+        for (i = 0; i < tabledata.length; i++) { //loop by row
+            content += '<tr>';
+            for (x = 1; x < columndata.length; x++) { //loop by column of current row
+                content += '<td>' + (JSON.stringify(tabledata[i][columndata[x]])).replace(/['"]+|\\r/g, '').replace(/\\n/g, '<br />') + '</td>';
+            }
+            content += '</tr>';
+        }
+        content += "</table>"
+
+        //add the table to the div
+        $('#main-table').append(content);
+    });
+</script>
+
+</html>
