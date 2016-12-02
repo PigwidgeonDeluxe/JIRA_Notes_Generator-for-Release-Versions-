@@ -231,10 +231,10 @@ app.post('/response', function(req, res, next) {
     function send_data(final_data){
         //res.send(final_data);
        //.on('end', function(){ //once the last function ends, send the data
-            res.render('index.ejs', {
-                release_data: table_data,
-                releases: release_versions
-            });
+	    res.render('index.ejs', {
+	        release_data: table_data,
+	        releases: release_versions
+	    });
         //}) 
     }
 

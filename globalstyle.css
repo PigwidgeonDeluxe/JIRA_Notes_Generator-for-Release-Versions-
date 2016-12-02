@@ -1,23 +1,32 @@
 /*formatting for all bodies. margin 0 auto centers the body */
 body {
-    position: absolute;
-    margin: 0 auto;
-    padding: 0;
-    width: 100%;
-    height: 100%;
     background-color: #263238;
     font-family: normal x-small verdana, arial, helvetica, sans-serif;
     color: #b2ccd6;
 }
 
-/*formatting for main-table div (index.ejs)
-#main-table{
-    display: block;
-    position: fixed;
-    height: 100%;
+.tabulator-col,.tabulator-col-row-handle{
+     white-space: normal;
+}
+
+#homepage-body{
+    position: absolute;
+    margin: 0 auto;
+    padding: 0;
     width: 100%;
+    height: 100%;
+}
+
+/*formatting for main-table div (index.ejs)*/
+#main-table-div{
+    position: absolute;
+    height: 500;
+    width: 90%;
     padding: 0;
     margin: 0;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
 
 /*formatting for tableForm (homepage)*/
 #tableForm{

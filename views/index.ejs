@@ -11,17 +11,15 @@
     <link rel="stylesheet" type="text/css" href="globalstyle.css">
 </head>
 
-<body>
-    <!--Tabulator tables-->
-    <div id="main-table-div"></div> 
-</body>
+<!--Tabulator tables-->
+<div id="main-table-div"></div> 
 
 <script type="text/javascript">
     //run script once the document is fully loaded
     $(document).ready(function() {
         var table_columns = { //define Tabulator
-            fitColumns: true, //fit columns to width of table (optional)
-            pagination: "local",
+            pagination:"local",
+            fitColumns:true,
             columns: [ //Define Table Columns //Define columns as percentages to allow for dynamic resizing based on window size 
                 {
                     title: "ID",
@@ -29,21 +27,21 @@
                     sorter: "string",
                     align: "center",
                     formatter: "textarea",
-                    width: "6%"
+                    width: "10%"
                 }, {
                     title: "RFC Name",
                     field: "rfc_name",
                     sorter: "string",
                     align: "center",
                     formatter: "textarea",
-                    width: "12%"
+                    width: "14%"
                 }, {
                     title: "Request Description",
                     field: "description",
                     sorter: "string",
                     sortable: false,
                     formatter: "textarea",
-                    width: "47%"
+                    width: "41%"
                 }, {
                     title: "State",
                     field: "state",
@@ -109,15 +107,14 @@
         //add the table to the divs created before
         $('#main-table-div').append(content)
         console.log("RV" + release_versions.length)
-        for (k = 1; k < release_versions.length; k++){
+        for (k = 0; k < release_versions.length; k++){
             //initialize the table
             $("#main-table-" + formatted_release_versions[k]).tabulator(table_columns);
             //load data into the table for current div 
             $("#main-table-" + formatted_release_versions[k]).tabulator("setData", table_data[release_versions[k]]);
-            console.log("#main-table-" + formatted_release_versions[k] + table_data[release_versions[k]])
+
+            //console.log("#main-table-" + formatted_release_versions[k] + table_data[release_versions[k]])
         }
-
-
 
         
     });
