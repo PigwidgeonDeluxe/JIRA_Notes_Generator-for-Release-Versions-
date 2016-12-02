@@ -19,7 +19,7 @@
 <script type="text/javascript">
     //run script once the document is fully loaded
     $(document).ready(function() {
-        $("#main-table").tabulator({ //define Tabulator
+        var table_columns = { //define Tabulator
             fitColumns: true, //fit columns to width of table (optional)
             pagination: "local",
             columns: [ //Define Table Columns //Define columns as percentages to allow for dynamic resizing based on window size 
@@ -83,24 +83,41 @@
                 },
             ],
             rowClick: function(e, id, data, row) { //open the issue for the row when the row is clicked
-                window.open("https://ondhdp.atlassian.net/projects/" + ((tabledata[id]["ch_id"]).split("-"))[0] + "/issues/" + tabledata[id]["ch_id"]);
+                window.open("https://ondhdp.atlassian.net/projects/" + ((table_data[id]["ch_id"]).split("-"))[0] + "/issues/" + table_data[id]["ch_id"]);
             },
-        });
-
+        };
+        //create the html tables (divs)
         //define some data from sent json data from nodejs server
         var table_data = <%- JSON.stringify(release_data) %>
         var release_versions = <%- JSON.stringify(releases) %>
+        var formatted_release_versions = [];
+        var content = "<table>";
+        console.log(table_data, release_versions)
+
+        for (i = 0; i < release_versions.length; i++){
+            formatted_release_versions.push(release_versions[i].replace(/[ .]/g, "-" ));
+        }
 
         //populate and create the column cells/data
-        for (i = 0; i < release_versions.length; i++) { //loop by row
-            content += "<div id=main-table-" + release_versions[i] + ">" +release_versions[i] + "</div>";
-                //load data into the table for current div 
-                $("#main-table-" + release_versions[i]).tabulator("setData", table_data[release_versions[i]]);
+        for (j = 0; j < release_versions.length; j++) { //loop by row
+            content += "<div id='main-table-" + formatted_release_versions[j] + "'" + ">" + release_versions[j] + "</div>";
+            
         }
         content += "</table>"
 
-        //add the table to the div
-        $('#main-table-div').append(content);
+        console.log(content)
+        //add the table to the divs created before
+        $('#main-table-div').append(content)
+        console.log("RV" + release_versions.length)
+        for (k = 1; k < release_versions.length; k++){
+            //initialize the table
+            $("#main-table-" + formatted_release_versions[k]).tabulator(table_columns);
+            //load data into the table for current div 
+            $("#main-table-" + formatted_release_versions[k]).tabulator("setData", table_data[release_versions[k]]);
+            console.log("#main-table-" + formatted_release_versions[k] + table_data[release_versions[k]])
+        }
+
+
 
         
     });

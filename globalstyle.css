@@ -1,6 +1,6 @@
 /*formatting for all bodies. margin 0 auto centers the body */
 body {
-    position: fixed;
+    position: absolute;
     margin: 0 auto;
     padding: 0;
     width: 100%;
@@ -10,7 +10,7 @@ body {
     color: #b2ccd6;
 }
 
-/*formatting for main-table div (index.ejs)*/
+/*formatting for main-table div (index.ejs)
 #main-table{
     display: block;
     position: fixed;
@@ -18,7 +18,7 @@ body {
     width: 100%;
     padding: 0;
     margin: 0;
-}
+
 /*formatting for tableForm (homepage)*/
 #tableForm{
     position: absolute;
