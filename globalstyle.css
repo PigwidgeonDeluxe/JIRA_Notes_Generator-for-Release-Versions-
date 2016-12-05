@@ -9,6 +9,16 @@ body {
      white-space: normal;
 }
 
+#table_header {
+    display: block;
+    font-size: 1.5em;
+    -webkit-margin-before: 0.83em;
+    -webkit-margin-after: 0.83em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    font-weight: bold;
+}
+
 #homepage-body{
     position: absolute;
     margin: 0 auto;
@@ -20,7 +30,6 @@ body {
 /*formatting for main-table div (index.ejs)*/
 #main-table-div{
     position: absolute;
-    height: 500;
     width: 90%;
     padding: 0;
     margin: 0;

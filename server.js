@@ -27,27 +27,27 @@ app.get('/globalstyle.css', function(req, res) {
 })
 
 //send CSS for global html formatting
-app.get('/jquery-3.1.1.min.js', function(req, res) {
+app.get('/jquery.min.js', function(req, res) {
     //send homepage
-    res.sendFile(__dirname + "/jquery-3.1.1.min.js");
+    res.sendFile(__dirname + "/node_modules/jquery/dist/jquery.min.js");
 })
 
 //send CSS for global html formatting
 app.get('/jquery-ui.min.css', function(req, res) {
     //send homepage
-    res.sendFile(__dirname + "/jquery-ui/jquery-ui.min.css");
+    res.sendFile(__dirname + "/jquery-ui-1.12.1/jquery-ui.min.css");
 })
 
 //send CSS for global html formatting
 app.get('/jquery.js', function(req, res) {
     //send homepage
-    res.sendFile(__dirname + "/jquery-ui/external/jquery/jquery.js");
+    res.sendFile(__dirname + "/node_modules/jquery/dist/jquery.js");
 })
 
 //send CSS for global html formatting
 app.get('/jquery-ui.min.js', function(req, res) {
     //send homepage
-    res.sendFile(__dirname + "/jquery-ui/jquery-ui.min.js");
+    res.sendFile(__dirname + "/jquery-ui-1.12.1/jquery-ui.min.js");
 })
 
 //send tabulator css file
