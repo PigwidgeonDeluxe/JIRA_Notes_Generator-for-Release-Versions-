@@ -98,46 +98,13 @@ app.post('/response', function(req, res, next) {
     };
 
     //url for getting all project IDs
-    var id_options = {
+    var project_options = {
         host: 'ondhdp.atlassian.net',
-        path: "/rest/api/2/project",
+        path: "/rest/api/2/project/" + user_response["project_key"],
         auth: user_response["username"] + ":" + user_response["password"]
     };
 
-    var project_options;
-    var project_id;
-
     /// callback functions ///
-
-    id_callback = function(response) {
-        var body = '';
-        //another chunk of data has been recieved, so append it to `body`
-        response.on('data', function(chunk) {
-            body += chunk;
-        })
-
-        //the whole response has been recieved
-        console.log("Response recieved, connection successful.");
-
-        response.on('end', function() {
-
-            console.log("Parsing recieved body for IDs.");
-            //parse the body
-            var parsedbody = parse_body(body);
-            //get the requested project's id and store it in a global var
-            project_id = id_finder(parsedbody, user_response["project_key"]);
-            console.log("Project ID acquired: " + project_id);
-            //res.send(project_id);
-            return;
-
-        }).on('end', function(){ //perform on the end of id_callback -- forces sequential execution
-            project_options = id_options;
-            project_options["path"] += "/" + project_id;
-            console.log("id_callback END.");
-            release_acquire();
-        });
-        
-    }
 
     project_callback = function(response) {
         var body = '';
@@ -182,16 +149,16 @@ app.post('/response', function(req, res, next) {
             send_data(table_data);
             return;
         } else { //otherwise continue the recursive function
-            request_tabledata(response, table_options, project_id, i);
+            request_tabledata(response, table_options, i);
             //console.log(table_data);
         }
     }
 
     //second part of a recursive function that retrieves data for the current version being recursed
-    function request_tabledata(response, table_options, project_id, i){
+    function request_tabledata(response, table_options, i){
         var parsedbody;
         //create a path for each different version
-        table_options['path'] = "/rest/api/2/search?jql=project=" + project_id + "%20AND%20fixVersion%20in%20('" + release_versions[i].replace(/ /g, "%20") + "')";
+        table_options['path'] = "/rest/api/2/search?jql=project=" + user_response["project_key"] + "%20AND%20fixVersion%20in%20('" + release_versions[i].replace(/ /g, "%20") + "')";
         //console.log(table_options);
 
         table_callback = function(response){
@@ -241,15 +208,6 @@ app.post('/response', function(req, res, next) {
 
     ///acquisition functions/// -- created for sequential execution and formatting
 
-    function id_acquire(){
-
-        //perform GET request to get project id catch any errors and print them
-        https.get(id_options, id_callback).on('error', (err) => {
-            console.log(err);
-            res.send(err);
-        });
-    }
-
     function release_acquire() {
 
         //perform GET request to get projects release versions catch any errors and print them
@@ -268,7 +226,7 @@ app.post('/response', function(req, res, next) {
 
     
 
-id_acquire();
+release_acquire();
 
 })
 
@@ -284,7 +242,7 @@ function jsonformat(inputjson) {
         //add id to current array
         outputjson[i][col_names[0]] = i;
         //add change id to current array
-        outputjson[i][col_names[1]] = inputjson["issues"][i]["key"];
+        outputjson[i][col_names[1]] = "<b>" + inputjson["issues"][i]["key"] + "</b";
         //add rfc_name to current array
         outputjson[i][col_names[2]] = inputjson["issues"][i]["fields"]["summary"];
         //add description fields to current array
@@ -294,30 +252,30 @@ function jsonformat(inputjson) {
             if (inputjson["issues"][i]["fields"]["customfield_1040" + x] != null) {
                 //add the appropriate decription name for each description entry. ie 10402 us Business Impact
                 if (x == 0) {
-                    var desc_name = " Business Objective and Rationale: "
+                    var desc_name = "<b>Business Objective and Rationale: </b>"
                 } else if (x == 1) {
-                    var desc_name = " Business Requirements: "
+                    var desc_name = "<b>Business Requirements: </b>"
                 } else if (x == 2) {
-                    var desc_name = " Business Impact: "
+                    var desc_name = "<b>Business Impact: </b>"
                 } else if (x == 3) {
-                    var desc_name = " End User Impact: "
+                    var desc_name = "<b>End User Impact: </b>"
                 } else if (x == 4) {
-                    var desc_name = " Business/User Impact If Change Is Not Done: "
+                    var desc_name = "<b>Business/User Impact If Change Is Not Done: </b>"
                 } else if (x == 5) {
-                    var desc_name = " Risk Assessment: "
+                    var desc_name = "<b>Risk Assessment: </b>"
                 } else if (x == 6) {
-                    var desc_name = " Solution: "
+                    var desc_name = "<b>Solution: </b>"
                 } else if (x == 8) {
-                    var desc_name = " Benefits: "
+                    var desc_name = "<b>Benefits: </b>"
                 }
                 //add the formatted decription to the array
-                outputjson[i]["description"] += desc_name + inputjson["issues"][i]["fields"]["customfield_1040" + x] + "\n" + "\n";
+                outputjson[i]["description"] += desc_name + inputjson["issues"][i]["fields"]["customfield_1040" + x] + "\n";
             }
         }
         //add the description as the description if it is not empty
         if (inputjson["issues"][i]["fields"]["description"] != null) {
             //add the formatted decription to the array
-            outputjson[i]["description"] += " Description: " + inputjson["issues"][i]["fields"]["description"] + "\n" + "\n";
+            outputjson[i]["description"] += " Description: " + inputjson["issues"][i]["fields"]["description"] + "\n";
         }
         //add state to current array
         outputjson[i][col_names[4]] = inputjson["issues"][i]["fields"]["status"]["name"];
@@ -359,21 +317,6 @@ function parse_body(body) {
         throw UserException(errormessage + "Check that the user information or URL is valid.");
         return;
     }
-}
-
-//function that searches and finds a project's id based on the project key
-function id_finder(parsedbody, key) {
-    //go through each project
-    for (i = 0; i < parsedbody.length; i++) {
-        //if the project is found
-        if (parsedbody[i]["key"] == key) {
-            //return the project's id
-            return parsedbody[i]["id"];
-        }
-    }
-    //if the loop has gone through each project and the key has not been found
-    throw UserException("404 Not Found: The given project key was not found. Please double check and try again.");
-    return;
 }
 
 //function that returns all the names of the releases
