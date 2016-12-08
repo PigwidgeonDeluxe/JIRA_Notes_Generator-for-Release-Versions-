@@ -23,7 +23,7 @@
         var release_versions = <%- JSON.stringify(releases) %>
         var releaseamount = release_versions.length;
         if (releaseamount == 0){
-            $('#main-table-div').append("<center>No Epics were found.</center>");
+            $('#main-table-div').append("<center>No Releases were found.</center>");
         } else {
             //create the html tables (divs)
             //define some data from sent json data from nodejs server
