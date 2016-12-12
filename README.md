@@ -1,5 +1,5 @@
 # JIRA_Notes_Generator (for Release Versions using Epics)
-Latest Version: V 0.5.0 - completely working webapp, uses Jira Epics instead of versions
+Latest Version: V 0.5.1 - completely working webapp, uses Jira Epics instead of versions
 ## Synopsis
 A fork of JIRA Notes Generator for viewing release versions on JIRA for a given project.
 
