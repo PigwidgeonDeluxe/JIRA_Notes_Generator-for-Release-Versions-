@@ -5,6 +5,10 @@ body {
     color: #b2ccd6;
 }
 
+td{
+    line-height: 30px;
+}
+
 .tabulator-col,.tabulator-col-row-handle{
      white-space: normal;
 }
@@ -30,11 +34,12 @@ body {
 /*formatting for main-table div (index.ejs)*/
 #main-table-div{
     position: absolute;
-    width: 90%;
+    width: 95%;
     padding: 0;
     margin: 0;
     left: 50%;
     transform: translate(-50%, 0%);
+    margin-bottom: 45px; 
 }
 
 /*formatting for tableForm (homepage)*/
