@@ -6,10 +6,10 @@ var bodyParser = require('body-parser');
 var ejs = require('ejs');
 //global variables
 var formattedjson;
-var release_versions;
+var release_epics;
 var table_data = {};
 //var for column names; allows for easier column addition but jsonformat still needs to be edited
-var col_names = ["id", "ch_id", "rfc_name", "description", "state", "priority", "impdate", "assignee", "effort"];
+var col_names = ["id", "ch_id", "rfc_name", "state", "priority", "impdate", "assignee", "component"];
 //
 //set view engine to ejs
 app.set('view engine', 'ejs');
@@ -100,7 +100,7 @@ app.post('/response', function(req, res, next) {
     //url for getting all project IDs
     var project_options = {
         host: 'ondhdp.atlassian.net',
-        path: "/rest/api/2/project/" + user_response["project_key"],
+        path: "https://ondhdp.atlassian.net/rest/api/2/search?jql=issuetype=Epic%20AND%20project=" + user_response["project_key"],
         auth: user_response["username"] + ":" + user_response["password"]
     };
 
@@ -118,13 +118,12 @@ app.post('/response', function(req, res, next) {
 
         response.on('end', function() {
 
-            console.log("Parsing recieved body for release_versions.");
+            console.log("Parsing recieved body for release_epics.");
             //parse the body
             var parsedbody = parse_body(body);
-            //get all release versions of the project
-            release_versions = version_finder(parsedbody["versions"]);
-            console.log("Release Versions acquired: " + release_versions);
-            //res.send(release_versions);
+            //get all epics of the project
+            release_epics = epic_finder(parsedbody["issues"]);
+            console.log("Release Epics acquired: " + release_epics);
 
         }).on('end', function(){ //once the function ends start the second one -- forces sequential execution
             console.log("project_callback END.");
@@ -143,7 +142,7 @@ app.post('/response', function(req, res, next) {
         };
 
         //if this is the last recurse, send the data and exit the function
-        if (i == release_versions.length){
+        if (i == release_epics.length){
             //return the final array with all the tables and their respective data
             //return table_data;
             send_data(table_data);
@@ -158,8 +157,7 @@ app.post('/response', function(req, res, next) {
     function request_tabledata(response, table_options, i){
         var parsedbody;
         //create a path for each different version
-        table_options['path'] = "/rest/api/2/search?jql=project=" + user_response["project_key"] + "%20AND%20fixVersion%20in%20('" + release_versions[i].replace(/ /g, "%20") + "')";
-        //console.log(table_options);
+        table_options['path'] = "https://ondhdp.atlassian.net/rest/api/2/search?jql=%22Epic%20Link%22%20=%20" + release_epics[i]["key"];
 
         table_callback = function(response){
 
@@ -172,7 +170,7 @@ app.post('/response', function(req, res, next) {
 
             //the whole response has been recieved
             response.on('end', function() {
-                console.log("Response recieved, connection successful: " + release_versions[i]);
+                console.log("Response recieved, connection successful: " + release_epics[i]["key"]);
                 console.log("Parsing recieved body for data.");
                 //parse the body
                 parsedbody = parse_body(body);
@@ -180,7 +178,7 @@ app.post('/response', function(req, res, next) {
             }).on('end', function() {
                 //get all required data for current table
                 
-                table_data[release_versions[i]] = jsonformat(parsedbody);
+                table_data[release_epics[i]["key"]] = jsonformat(parsedbody);
                 table_data_retrieval(response, (i + 1));
                 //return finalbody;
             });
@@ -195,14 +193,12 @@ app.post('/response', function(req, res, next) {
     }
 
 
+    //send the acquired data to the user in the format of the page
     function send_data(final_data){
-        //res.send(final_data);
-       //.on('end', function(){ //once the last function ends, send the data
 	    res.render('index.ejs', {
 	        release_data: table_data,
-	        releases: release_versions
+	        releases: release_epics
 	    });
-        //}) 
     }
 
 
@@ -245,59 +241,29 @@ function jsonformat(inputjson) {
         outputjson[i][col_names[1]] = "<b>" + inputjson["issues"][i]["key"] + "</b";
         //add rfc_name to current array
         outputjson[i][col_names[2]] = inputjson["issues"][i]["fields"]["summary"];
-        //add description fields to current array
-        outputjson[i][col_names[3]] = "";
-        for (x = 0; x <= 8; x++) {
-            //if the field isn't empty
-            if (inputjson["issues"][i]["fields"]["customfield_1040" + x] != null) {
-                //add the appropriate decription name for each description entry. ie 10402 us Business Impact
-                if (x == 0) {
-                    var desc_name = "<b>Business Objective and Rationale: </b>"
-                } else if (x == 1) {
-                    var desc_name = "<b>Business Requirements: </b>"
-                } else if (x == 2) {
-                    var desc_name = "<b>Business Impact: </b>"
-                } else if (x == 3) {
-                    var desc_name = "<b>End User Impact: </b>"
-                } else if (x == 4) {
-                    var desc_name = "<b>Business/User Impact If Change Is Not Done: </b>"
-                } else if (x == 5) {
-                    var desc_name = "<b>Risk Assessment: </b>"
-                } else if (x == 6) {
-                    var desc_name = "<b>Solution: </b>"
-                } else if (x == 8) {
-                    var desc_name = "<b>Benefits: </b>"
-                }
-                //add the formatted decription to the array
-                outputjson[i]["description"] += desc_name + inputjson["issues"][i]["fields"]["customfield_1040" + x] + "\n";
-            }
-        }
-        //add the description as the description if it is not empty
-        if (inputjson["issues"][i]["fields"]["description"] != null) {
-            //add the formatted decription to the array
-            outputjson[i]["description"] += " Description: " + inputjson["issues"][i]["fields"]["description"] + "\n";
-        }
         //add state to current array
-        outputjson[i][col_names[4]] = inputjson["issues"][i]["fields"]["status"]["name"];
+        outputjson[i][col_names[3]] = inputjson["issues"][i]["fields"]["status"]["name"];
         //add priority to current array
-        outputjson[i][col_names[5]] = inputjson["issues"][i]["fields"]["priority"]["name"];
+        outputjson[i][col_names[4]] = inputjson["issues"][i]["fields"]["priority"]["name"];
         //add reporter to current array
         if (inputjson["issues"][i]["fields"]["duedate"] != null) {
-            outputjson[i][col_names[6]] = inputjson["issues"][i]["fields"]["duedate"];
+            outputjson[i][col_names[5]] = inputjson["issues"][i]["fields"]["duedate"];
         } else {
-            outputjson[i][col_names[6]] = "N/A";
+            outputjson[i][col_names[5]] = "N/A";
         }
         //add assignee to current array if an assignee exists
         if (inputjson["issues"][i]["fields"]["assignee"] != null) {
-            outputjson[i][col_names[7]] = inputjson["issues"][i]["fields"]["assignee"]["displayName"];
+            outputjson[i][col_names[6]] = inputjson["issues"][i]["fields"]["assignee"]["displayName"];
         } else {
-            outputjson[i][col_names[7]] = "N/A";
+            outputjson[i][col_names[6]] = "N/A";
         }
-        //add the amount of effort/cost (estimate days * 900) if an estimation exists
-        if (inputjson["issues"][i]["fields"]["customfield_10506"] != null) {
-            outputjson[i][col_names[8]] = "$ " + parseFloat(inputjson["issues"][i]["fields"]["customfield_10506"]) * 900;
-        } else {
-            outputjson[i][col_names[8]] = "N/A";
+        //add the component type
+        for (x = 0; x <  inputjson["issues"][i]["fields"]["components"].length; x++){
+            if (inputjson["issues"][i]["fields"]["components"][0]["name"] != null) {
+                outputjson[i][col_names[7]] = inputjson["issues"][i]["fields"]["components"][0]["name"];
+            } else {
+                outputjson[i][col_names[7]] = "N/A";
+            }
         }
 
     }
@@ -320,12 +286,12 @@ function parse_body(body) {
 }
 
 //function that returns all the names of the releases
-function version_finder(parsedbody) {
+function epic_finder(parsedbody) {
     name_list = [];
     //go through each version
     for (i = 0; i < parsedbody.length; i++) {
-        //add the version name to the name list
-        name_list.push(parsedbody[i]["name"]);
+        //add the key and version name to the name list
+        name_list.push({"key":parsedbody[i]["key"], "summary":parsedbody[i]["fields"]["summary"]});
     }
     return name_list;
 }

@@ -13,8 +13,7 @@
 
 
 <!--Tabulator tables-->
-<div id="main-table-div"></div> 
-
+<div id="main-table-div"></div>
 
 <script type="text/javascript">
     //run script once the document is fully loaded
@@ -23,7 +22,7 @@
         var release_versions = <%- JSON.stringify(releases) %>
         var releaseamount = release_versions.length;
         if (releaseamount == 0){
-            $('#main-table-div').append("<center>No Releases were found.</center>");
+            $('#main-table-div').append("<center>No Epics were found.</center>");
         } else {
             //create the html tables (divs)
             //define some data from sent json data from nodejs server
@@ -34,6 +33,7 @@
             var table_columns = {
                 fitColumns:false,
                 colMinWidth:80,
+                groupBy:"component",
                 columns: [ //Define Table Columns //Define columns as percentages to allow for dynamic resizing based on window size 
                     {
                         title: "ID",
@@ -41,28 +41,21 @@
                         sorter: "string",
                         align: "center",
                         formatter: "textarea",
-                        width: "9%"
+                        width: "10%"
                     }, {
                         title: "RFC Name",
                         field: "rfc_name",
                         sorter: "string",
                         align: "center",
                         formatter: "textarea",
-                        width: "14%"
-                    }, {
-                        title: "Request Description",
-                        field: "description",
-                        sorter: "string",
-                        sortable: false,
-                        formatter: "textarea",
-                        width: "38%"
+                        width: "34%"
                     }, {
                         title: "State",
                         field: "state",
                         sorter: "string",
                         align: "center",
                         formatter: "textarea",
-                        width: "9%",
+                        width: "12%",
                         //set the colours for different priorities
                         formatter:function(value, data){
                             if(value == "Requested"){//bright gold
@@ -99,7 +92,7 @@
                         sorter: "string",
                         align: "center",
                         formatter: "textarea",
-                        width: "7%",
+                        width: "10%",
                         //set the colours for different priorities
                         formatter:function(value, data){
                             if(value == "Highest"){
@@ -127,22 +120,21 @@
                         sorter: "string",
                         align: "center",
                         formatter: "textarea",
-                        width: "8%"
-                    }, {
-                        title: "Effort",
-                        field: "effort",
-                        sorter: "string",
-                        align: "center",
-                        formatter: "textarea",
-                        width: "6%"
-
+                        width: "10%"
                     }, {
                         title: "Assignee",
                         field: "assignee",
                         sorter: "string",
                         align: "center",
                         formatter: "textarea",
-                        width: "9%"
+                        width: "12%"
+                    }, {
+                        title: "Component",
+                        field: "component",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "12%"
                     },
                 ],
                 rowClick: function(e, id, data, row) { //open the issue for the row when the row is clicked
@@ -154,12 +146,12 @@
 
             //remove spaces and periods
             for (i = 0; i < releaseamount; i++){
-                formatted_release_versions.push(release_versions[i].replace(/[ .]/g, "-" ));
+                formatted_release_versions.push(release_versions[i]["key"].replace(/[ .]/g, "-" ));
             }
 
             //populate and create the column cells/data
             for (j = 0; j < releaseamount; j++) { //loop by row
-                content += "<h1 id='table_header'>" + release_versions[j] + "</h1>"
+                content += "<h1 id='table_header'>" + release_versions[j]["key"] + " : " + release_versions[j]["summary"] + "</h1>"
                 content += "<div id='main-table-" + formatted_release_versions[j] + "'" + ">" + "</div>";
                 
             }
@@ -173,7 +165,7 @@
                 //initialize the table
                 $("#main-table-" + formatted_release_versions[k]).tabulator(table_columns);
                 //load data into the table for current div 
-                $("#main-table-" + formatted_release_versions[k]).tabulator("setData", table_data[release_versions[k]]);
+                $("#main-table-" + formatted_release_versions[k]).tabulator("setData", table_data[release_versions[k]["key"]]);
 
                 //console.log("#main-table-" + formatted_release_versions[k] + table_data[release_versions[k]])
             }
