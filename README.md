@@ -1,7 +1,7 @@
 # JIRA_Notes_Generator (for Release Versions using Epics)
 Latest Version: V 0.5.1 - completely working webapp, uses Jira Epics instead of versions
 ## Synopsis
-A fork of JIRA Notes Generator for viewing release versions on JIRA for a given project.
+JIRA Notes Generator is a webapp for viewing release versions on JIRA for a given project.
 
 ## Motivation
 This webapp was created to fulfill the need of creating tables for release version meeting notes.
@@ -31,7 +31,7 @@ This means that the webapp was unable to connect to the JIRA API. Doublecheck th
 This means that the returned JSON from JIRA was invalid. This usually means that the username or password you entered was incorrect. The least common reason would be an incorrect URL should the JIRA API ever be changed.
 
 ## Built With
-This webapp was built with Tabulator using a custom CSS theme (borderless). The latest version of Tabulator can be found here: http://olifolkerd.github.io/tabulator/ and currently is used with this projeact under the MIT License. A copy of Tabulator and its original License is included in this Github. All credit for Tabulator goes to olifolkerd.
+This webapp was built with Tabulator using a custom CSS theme (borderless). The latest version of Tabulator can be found here: http://olifolkerd.github.io/tabulator/ and currently is used with this project under the MIT License. A copy of Tabulator and its original License is included in this Github. All credit for Tabulator goes to olifolkerd.
 
 ## License
 This project is licensed under the MIT license. Refer to LICENSE.md for details.
