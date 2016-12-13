@@ -4,7 +4,7 @@ body {
     font-family: normal x-small verdana, arial, helvetica, sans-serif;
     color: #b2ccd6;
 }
-
+/*formats line height for homepage elements*/
 td{
     line-height: 30px;
 }
@@ -13,6 +13,13 @@ td{
      white-space: normal;
 }
 
+/*formats title*/
+#title{
+    font-weight: bold;
+    line-height: 40px;
+}
+
+/*formats header for each table*/
 #table_header {
     display: block;
     font-size: 1.5em;
@@ -22,7 +29,7 @@ td{
     -webkit-margin-end: 0px;
     font-weight: bold;
 }
-
+/*formats body for homepage*/
 #homepage-body{
     position: absolute;
     margin: 0 auto;
