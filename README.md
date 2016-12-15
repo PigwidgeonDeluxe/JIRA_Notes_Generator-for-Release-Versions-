@@ -1,5 +1,5 @@
 # JIRA_Notes_Generator (for Release Versions using Epics)
-Latest Version: V 0.5.1 - completely working webapp, uses Jira Epics instead of versions
+Latest Version: V 0.6.0 - added Scope table, basic error handling. requires better error handling 
 ## Synopsis
 JIRA Notes Generator is a webapp for viewing release versions on JIRA for a given project.
 
