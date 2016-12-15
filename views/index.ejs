@@ -13,24 +13,28 @@
 
 
 <!--Tabulator tables-->
+
+<div id="scope-table-div"> <h1 id="table_header" style="font-size: 2em;"> Scope </h1> </div>
 <div id="main-table-div"></div>
 
 <script type="text/javascript">
     //run script once the document is fully loaded
     $(document).ready(function() {
+        //declare and load JSON sent from server
         var table_data = <%- JSON.stringify(release_data) %>
         var release_versions = <%- JSON.stringify(releases) %>
         var releaseamount = release_versions.length;
+
+        //if there are no releases
         if (releaseamount == 0){
+            //tell user that there are no epics
             $('#main-table-div').append("<center>No Epics were found.</center>");
-        } else {
-            //create the html tables (divs)
+        } else {//if there are releases
             //define some data from sent json data from nodejs server
             var formatted_release_versions = [];
-            var content = "<table>";
 
-            //define Tabulator, specify columns, behaviour, etc
-            var table_columns = {
+            //define Tabulator for main table, specify columns, behaviour, etc
+            var main_table_columns = {
                 fitColumns:false,
                 colMinWidth:80,
                 groupBy:"component",
@@ -40,7 +44,9 @@
                         field: "ch_id",
                         sorter: "string",
                         align: "center",
-                        formatter: "textarea",
+                        formatter:function(value, data){
+                            return "<b>" + value + "</b>"
+                        },
                         width: "10%"
                     }, {
                         title: "RFC Name",
@@ -138,32 +144,114 @@
                     },
                 ],
                 rowClick: function(e, id, data, row) { //open the issue for the row when the row is clicked
-                    var data_chid =  data["ch_id"].replace(/[<b>]|[</b>]/g, "");
+                    var data_chid =  data["ch_id"];
                     window.open("https://ondhdp.atlassian.net/projects/" + data_chid.split("-")[0] + "/issues/" + data_chid);
 
                 },
             };
 
+            //define Tabulator for scope table
+            var scope_table_columns = {
+                fitColumns:false,
+                colMinWidth:80,
+                columns: [ //Define Table Columns //Define columns as percentages to allow for dynamic resizing based on window size 
+                    {
+                        title: "Scope",
+                        field: "summary",
+                        sorter: "string",
+                        align: "center",
+                        formatter:function(value, data){
+                            return "<b>" + value + "</b>"
+                        },
+                        width: "15%"
+                    },{
+                        title: "Status",
+                        field: "status",
+                        sorter: "string",
+                        align: "center",
+                        formatter:function(value, data){
+                            if(value == "Completed"){
+                                return "<span style='background-color:#78866B; font-weight:bold;'>" + value + "</span>";
+                            } else if(value == "On Track"){
+                                return "<span style='background-color:#4CC417; font-weight:bold;'>" + value + "</span>";
+                            } else if(value == "At Risk"){
+                                return "<span style='background-color:yellow; font-weight:bold;'>" + value + "</span>";
+                            } else if(value == "Issue"){
+                                return "<span style='background-color:red; font-weight:bold;'>" + value + "</span>";
+                            } else {
+                                return value;
+                            }
+                        },
+                        width: "15%"
+                    },{
+                        title: "Go Live",
+                        field: "go_live",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "15%"
+                    },{
+                        title: "Package Date",
+                        field: "duedate",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "15%"
+                    },{
+                        title: "Pre-Production Dates",
+                        field: "preprod",
+                        sorter: "string",
+                        align: "center",
+                        formatter:function(value, data){
+                            return value[0] + " - " + value[1]
+                        },
+                        width: "20%"
+                    },{
+                        title: "Production Dates",
+                        field: "prod",
+                        sorter: "string",
+                        align: "center",
+                        formatter:function(value, data){
+                            return value[0] + " - " + value[1]
+                        },
+                        width: "20%"
+                    }
+                ],
+                rowClick: function(e, id, data, row) { //open the issue for the row when the row is clicked
+                    var data_key =  data["key"];
+                    window.open("https://ondhdp.atlassian.net/projects/" + data_key.split("-")[0] + "/issues/" + data_key);
+
+                },
+            }
+
+            //set scope columns
+            $('#scope-table-div').tabulator(scope_table_columns);
+            //add data to scope table
+            $('#scope-table-div').tabulator("setData", release_versions);
+
+
+            //create the main table
+            var main_content = "<table>";
             //remove spaces and periods
             for (i = 0; i < releaseamount; i++){
                 formatted_release_versions.push(release_versions[i]["key"].replace(/[ .]/g, "-" ));
             }
 
-            //populate and create the column cells/data
+            //populate and create the column cells/data for each table
             for (j = 0; j < releaseamount; j++) { //loop by row
-                content += "<h1 id='table_header'>" + release_versions[j]["key"] + " : " + release_versions[j]["summary"] + "</h1>"
-                content += "<div id='main-table-" + formatted_release_versions[j] + "'" + ">" + "</div>";
+                main_content += "<h1 id='table_header1'>" + release_versions[j]["summary"] +"</h1>" + "<h2 id='table_header2'>" + " : Go Live "+ release_versions[j]["go_live" ] + "</h2><hr>" ;
+                main_content += "<div id='main-table-" + formatted_release_versions[j] + "'" + ">" + "</div>";
                 
             }
-            content += "</table>"
+            main_content += "</table>"
 
-            console.log(content)
-            //add the table to the divs created before
-            $('#main-table-div').append(content)
-            //console.log("RV" + release_versions.length)
+
+            //add the main table to the main div created before
+            $('#main-table-div').append(main_content);
+            
             for (k = 0; k < releaseamount; k++){
                 //initialize the table
-                $("#main-table-" + formatted_release_versions[k]).tabulator(table_columns);
+                $("#main-table-" + formatted_release_versions[k]).tabulator(main_table_columns);
                 //load data into the table for current div 
                 $("#main-table-" + formatted_release_versions[k]).tabulator("setData", table_data[release_versions[k]["key"]]);
 

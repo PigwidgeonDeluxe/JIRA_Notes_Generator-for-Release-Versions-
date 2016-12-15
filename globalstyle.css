@@ -18,9 +18,15 @@ td{
     font-weight: bold;
     line-height: 40px;
 }
+/*formats hr for h1 and h2 to be on same line*/
+hr {
+    clear: both;
+    visibility: hidden;
+}
 
-/*formats header for each table*/
-#table_header {
+/*formats h1  header for each table*/
+#table_header1 {
+    float: left;
     display: block;
     font-size: 1.5em;
     -webkit-margin-before: 0.83em;
@@ -29,6 +35,13 @@ td{
     -webkit-margin-end: 0px;
     font-weight: bold;
 }
+/*formats h2 to be light font*/
+#table_header2 {
+    float: left;
+    font-weight: lighter;
+    font-size: 1.5em;
+}
+
 /*formats body for homepage*/
 #homepage-body{
     position: absolute;
@@ -40,10 +53,20 @@ td{
 
 /*formatting for main-table div (index.ejs)*/
 #main-table-div{
-    position: absolute;
+    position: relative;
+    width: 95%;
+    padding: 0px;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    margin-bottom: 45px; 
+}
+
+/*formatting for scope-table div (index.ejs)*/
+#scope-table-div{
+    background-color: inherit;
+    position: relative;
     width: 95%;
     padding: 0;
-    margin: 0;
     left: 50%;
     transform: translate(-50%, 0%);
     margin-bottom: 45px; 

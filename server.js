@@ -97,7 +97,7 @@ app.post('/response', function(req, res, next) {
         project_key: req.body.pk_query
     };
 
-    //url for getting all project IDs
+    //url for getting all Epics
     var project_options = {
         host: 'ondhdp.atlassian.net',
         path: "https://ondhdp.atlassian.net/rest/api/2/search?jql=issuetype=Epic%20AND%20project=" + user_response["project_key"],
@@ -122,7 +122,7 @@ app.post('/response', function(req, res, next) {
             //parse the body
             var parsedbody = parse_body(body);
             //get all epics of the project
-            release_epics = epic_finder(parsedbody["issues"]);
+            release_epics = epic_data(parsedbody["issues"], response);
             console.log("Release Epics acquired: " + release_epics);
 
         }).on('end', function(){ //once the function ends start the second one -- forces sequential execution
@@ -141,10 +141,13 @@ app.post('/response', function(req, res, next) {
             auth: user_response["username"] + ":" + user_response["password"]
         };
 
+        //catch error
+        if (typeof release_epics == "string") {
+            res.send(release_epics);
         //if this is the last recurse, send the data and exit the function
-        if (i == release_epics.length){
-            //return the final array with all the tables and their respective data
-            //return table_data;
+        }else if (i == release_epics.length){
+            //send the final array with all the tables and their respective data
+            console.log("Sending data to front.")
             send_data(table_data);
             return;
         } else { //otherwise continue the recursive function
@@ -205,7 +208,7 @@ app.post('/response', function(req, res, next) {
     ///acquisition functions/// -- created for sequential execution and formatting
 
     function release_acquire() {
-
+        
         //perform GET request to get projects release versions catch any errors and print them
         https.get(project_options, project_callback).on('error', (err) => {
             console.log(err);
@@ -238,7 +241,7 @@ function jsonformat(inputjson) {
         //add id to current array
         outputjson[i][col_names[0]] = i;
         //add change id to current array
-        outputjson[i][col_names[1]] = "<b>" + inputjson["issues"][i]["key"] + "</b";
+        outputjson[i][col_names[1]] = inputjson["issues"][i]["key"];
         //add rfc_name to current array
         outputjson[i][col_names[2]] = inputjson["issues"][i]["fields"]["summary"];
         //add state to current array
@@ -266,6 +269,7 @@ function jsonformat(inputjson) {
             }
         }
 
+
     }
     return outputjson;
 }
@@ -278,31 +282,53 @@ function parse_body(body) {
         return parsedbody;
     } catch (err) {
         //if there is an error, print error to console and user and stop execution
-        errormessage = "JSON.parse error: " + err
+        errormessage = "JSON.parse error: " + err + "Check that the user information or URL is valid.";
         console.log(errormessage);
-        throw UserException(errormessage + "Check that the user information or URL is valid.");
-        return;
+        
     }
 }
 
 //function that returns all the names of the releases
-function epic_finder(parsedbody) {
-    name_list = [];
-    //go through each version
-    for (i = 0; i < parsedbody.length; i++) {
-        //add the key and version name to the name list
-        name_list.push({"key":parsedbody[i]["key"], "summary":parsedbody[i]["fields"]["summary"]});
+function epic_data(parsedbody) {
+    try {
+        data_list = [];
+        //go through each version
+        for (i = 0; i < parsedbody.length; i++) {
+            //get each value and remove dashes
+            var preprod_start = month_name(parsedbody[i]["fields"]["customfield_11300"]).replace(/-/g,' ');
+            var preprod_end = month_name(parsedbody[i]["fields"]["customfield_11301"]).replace(/-/g,' ');
+            var prod_start = month_name(parsedbody[i]["fields"]["customfield_11302"]).replace(/-/g,' ');
+            var prod_end = month_name(parsedbody[i]["fields"]["customfield_11303"]).replace(/-/g,' ');
+            //add the key and version name to the name list
+            data_list.push({"key":parsedbody[i]["key"], 
+                "summary":parsedbody[i]["fields"]["summary"],
+                "go_live":prod_end,
+                "preprod":[preprod_start, preprod_end],
+                "prod":[prod_start, prod_end],
+                "duedate":month_name(parsedbody[i]["fields"]["duedate"]).replace(/-/g,' '),
+                "status":parsedbody[i]["fields"]["status"]["name"],
+            });
+        }
+        return data_list;
+    } catch (err) {
+        //if there is an error, print error to console and user and stop execution
+        errormessage = "Operational Error: " + err + "; Check that the user information, project, or URL is valid.";
+        console.log(errormessage);
+        //return the error message string to trigger error message to user
+        return errormessage;
     }
-    return name_list;
 }
 
-
-
-//error message
-function UserException(message, res) {
-    console.log(message);
-    //res.end(message);
-    return;
+//converts month number to month name (format must be yyyy-mm-dd including dash symbols)
+function month_name(inputdate){
+    //if the inputdate is not undefined
+    if (inputdate != undefined){
+        var month_names = ["null", 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        input_array = inputdate.split("-");
+        return input_array[0] + "-" + month_names[input_array[1]] + "-" + input_array[2]
+    } else {
+        return "N/A";
+    }
 }
 
 
