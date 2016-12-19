@@ -106,7 +106,7 @@ app.post('/response', function(req, res, next) {
 
     /// callback functions ///
 
-    project_callback = function(response) {
+    project_callback = function(response, err) {
         var body = '';
         //another chunk of data has been recieved, so append it to `body`
         response.on('data', function(chunk) {
@@ -121,6 +121,7 @@ app.post('/response', function(req, res, next) {
             console.log("Parsing recieved body for release_epics.");
             //parse the body
             var parsedbody = parse_body(body);
+
             //get all epics of the project
             release_epics = epic_data(parsedbody["issues"], response);
             console.log("Release Epics acquired: " + release_epics);
@@ -130,10 +131,11 @@ app.post('/response', function(req, res, next) {
             data_acquire();
         })
 
+        if (err) {return next(err);}
     }
 
     //first part of a recursive function that retrieves the data for all the versions
-    function table_data_retrieval(response, i){
+    function table_data_retrieval(response, i, err){
 
         //specify options for table data retrieval
         var table_options = {
@@ -141,9 +143,10 @@ app.post('/response', function(req, res, next) {
             auth: user_response["username"] + ":" + user_response["password"]
         };
 
-        //catch error
-        if (typeof release_epics == "string") {
+        //print error to user
+        if (typeof release_epics == "string" | typeof release_epics == "undefined") {
             res.send(release_epics);
+            return;
         //if this is the last recurse, send the data and exit the function
         }else if (i == release_epics.length){
             //send the final array with all the tables and their respective data
@@ -154,10 +157,12 @@ app.post('/response', function(req, res, next) {
             request_tabledata(response, table_options, i);
             //console.log(table_data);
         }
+
+        if (err) {return next(err);}
     }
 
     //second part of a recursive function that retrieves data for the current version being recursed
-    function request_tabledata(response, table_options, i){
+    function request_tabledata(response, table_options, i, err){
         var parsedbody;
         //create a path for each different version
         table_options['path'] = "https://ondhdp.atlassian.net/rest/api/2/search?jql=%22Epic%20Link%22%20=%20" + release_epics[i]["key"];
@@ -177,7 +182,7 @@ app.post('/response', function(req, res, next) {
                 console.log("Parsing recieved body for data.");
                 //parse the body
                 parsedbody = parse_body(body);
-                //console.log(parsedbody)
+                
             }).on('end', function() {
                 //get all required data for current table
                 
@@ -193,35 +198,41 @@ app.post('/response', function(req, res, next) {
             res.send(err);
         })
         
+        if (err) {return next(err);}
     }
 
 
     //send the acquired data to the user in the format of the page
-    function send_data(final_data){
+    function send_data(final_data, err){
 	    res.render('index.ejs', {
 	        release_data: table_data,
 	        releases: release_epics
 	    });
+
+        if (err) {return next(err);}
     }
 
 
     ///acquisition functions/// -- created for sequential execution and formatting
 
-    function release_acquire() {
+    function release_acquire(err) {
         
         //perform GET request to get projects release versions catch any errors and print them
         https.get(project_options, project_callback).on('error', (err) => {
             console.log(err);
             res.send(err);
         });
+
+        if (err) {return next(err);}
     }
 
-    function data_acquire(response) {
+    function data_acquire(response, err) {
 
         //get the data for each version
         table_data_retrieval(response, 0);
-    }
 
+        if (err) {return next(err);}
+    }
 
     
 
@@ -284,7 +295,7 @@ function parse_body(body) {
         //if there is an error, print error to console and user and stop execution
         errormessage = "JSON.parse error: " + err + "Check that the user information or URL is valid.";
         console.log(errormessage);
-        
+        return errormessage;
     }
 }
 
@@ -323,13 +334,21 @@ function epic_data(parsedbody) {
 function month_name(inputdate){
     //if the inputdate is not undefined
     if (inputdate != undefined){
-        var month_names = ["null", 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         input_array = inputdate.split("-");
-        return input_array[0] + "-" + month_names[input_array[1]] + "-" + input_array[2]
+        return input_array[0] + "-" + month_names[input_array[1] - 1] + "-" + input_array[2]
     } else {
         return "N/A";
     }
 }
+
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
+});
 
 
 //start server at port 8081
