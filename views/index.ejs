@@ -157,7 +157,7 @@
                 columns: [ //Define Table Columns //Define columns as percentages to allow for dynamic resizing based on window size 
                     {
                         title: "Scope",
-                        field: "summary",
+                        field: "epic",
                         sorter: "string",
                         align: "center",
                         formatter:function(value, data){
@@ -238,8 +238,15 @@
             }
 
             //populate and create the column cells/data for each table
-            for (j = 0; j < releaseamount; j++) { //loop by row
-                main_content += "<h1 id='table_header1'>" + release_versions[j]["summary"] +"</h1>" + "<h2 id='table_header2'>" + "Go Live : "+ release_versions[j]["go_live" ] + "</h2><hr>" ;
+            for (j = 0; j <  releaseamount; j++) { //loop by row ; in reverse for smaller to larger number ordering
+                var header_name;
+                if (release_versions[j]["summary"] == release_versions[j]["epic"]){
+                    header_name = release_versions[j]["epic"];
+                } else {
+                    header_name = release_versions[j]["epic"] + " - " + release_versions[j]["summary"];
+                }
+
+                main_content += "<h1 id='table_header1'>" + header_name +"</h1>" + "<h2 id='table_header2'>" + "Go Live : "+ release_versions[j]["go_live" ] + "</h2><hr>" ;
                 main_content += "<div id='main-table-" + formatted_release_versions[j] + "'" + ">" + "</div>";
                 
             }

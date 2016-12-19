@@ -100,13 +100,13 @@ app.post('/response', function(req, res, next) {
     //url for getting all Epics
     var project_options = {
         host: 'ondhdp.atlassian.net',
-        path: "https://ondhdp.atlassian.net/rest/api/2/search?jql=issuetype=Epic%20AND%20project=" + user_response["project_key"] + "%20ORDER%20BY%20%27Epic%20Name%27%20ASC",
+        path: "https://ondhdp.atlassian.net/rest/api/2/search?jql=issuetype=Epic%20AND%20project=" + user_response["project_key"],
         auth: user_response["username"] + ":" + user_response["password"]
     };
 
     /// callback functions ///
 
-    project_callback = function(response, err) {
+    project_callback = function(response) {
         var body = '';
         //another chunk of data has been recieved, so append it to `body`
         response.on('data', function(chunk) {
@@ -121,9 +121,13 @@ app.post('/response', function(req, res, next) {
             console.log("Parsing recieved body for release_epics.");
             //parse the body
             var parsedbody = parse_body(body);
-
+            //print parse_body error to user
+            if (typeof parsedbody == "string"){
+                res.send(parsedbody);
+                return;
+            }
             //get all epics of the project
-            release_epics = epic_data(parsedbody["issues"]);
+            release_epics = epic_data(parsedbody["issues"], response);
             console.log("Release Epics acquired: " + release_epics);
 
         }).on('end', function(){ //once the function ends start the second one -- forces sequential execution
@@ -131,11 +135,10 @@ app.post('/response', function(req, res, next) {
             data_acquire();
         })
 
-        if (err) {return next(err);}
     }
 
     //first part of a recursive function that retrieves the data for all the versions
-    function table_data_retrieval(response, i, err){
+    function table_data_retrieval(response, i){
 
         //specify options for table data retrieval
         var table_options = {
@@ -144,7 +147,7 @@ app.post('/response', function(req, res, next) {
         };
 
         //print error to user
-        if (typeof release_epics == "string" | typeof release_epics == "undefined") {
+        if (typeof release_epics == "string") {
             res.send(release_epics);
             return;
         //if this is the last recurse, send the data and exit the function
@@ -157,12 +160,10 @@ app.post('/response', function(req, res, next) {
             request_tabledata(response, table_options, i);
             //console.log(table_data);
         }
-
-        if (err) {return next(err);}
     }
 
     //second part of a recursive function that retrieves data for the current version being recursed
-    function request_tabledata(response, table_options, i, err){
+    function request_tabledata(response, table_options, i){
         var parsedbody;
         //create a path for each different version
         table_options['path'] = "https://ondhdp.atlassian.net/rest/api/2/search?jql=%22Epic%20Link%22%20=%20" + release_epics[i]["key"];
@@ -182,7 +183,11 @@ app.post('/response', function(req, res, next) {
                 console.log("Parsing recieved body for data.");
                 //parse the body
                 parsedbody = parse_body(body);
-                
+                //print parse_body error to user
+                if (typeof parsedbody == "string"){
+                    res.send(parsedbody);
+                    //return;
+                }
             }).on('end', function() {
                 //get all required data for current table
                 
@@ -198,44 +203,37 @@ app.post('/response', function(req, res, next) {
             res.send(err);
         })
         
-        if (err) {return next(err);}
+    }
+
+
+    //send the acquired data to the user in the format of the page
+    function send_data(final_data){
+	    res.render('index.ejs', {
+	        release_data: table_data,
+	        releases: release_epics
+	    });
     }
 
 
     ///acquisition functions/// -- created for sequential execution and formatting
 
-    function release_acquire(err) {
+    function release_acquire() {
         
         //perform GET request to get projects release versions catch any errors and print them
         https.get(project_options, project_callback).on('error', (err) => {
             console.log(err);
             res.send(err);
         });
-
-        if (err) {return next(err);}
     }
 
-    function data_acquire(response, err) {
+    function data_acquire(response) {
 
         //get the data for each version
         table_data_retrieval(response, 0);
-
-        if (err) {return next(err);}
     }
+
 
     
-
-    //send the acquired data to the user in the format of the page
-    function send_data(final_data, err){
-        res.render('index.ejs', {
-            release_data: table_data,
-            releases: release_epics
-        });
-
-        if (err) {return next(err);}
-    }
-
-
 
 release_acquire();
 
@@ -314,7 +312,6 @@ function epic_data(parsedbody) {
             //add the key and version name to the name list
             data_list.push({"key":parsedbody[i]["key"], 
                 "summary":parsedbody[i]["fields"]["summary"],
-                "epic":parsedbody[i]["fields"]["customfield_10005"],
                 "go_live":prod_end,
                 "preprod":[preprod_start, preprod_end],
                 "prod":[prod_start, prod_end],
@@ -343,14 +340,6 @@ function month_name(inputdate){
         return "N/A";
     }
 }
-
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
-});
 
 
 //start server at port 8081
