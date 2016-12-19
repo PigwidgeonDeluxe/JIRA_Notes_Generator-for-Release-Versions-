@@ -6,7 +6,7 @@ body {
 }
 /*formats line height for homepage elements*/
 td{
-    line-height: 30px;
+    line-height: 35px;
 }
 
 .tabulator-col,.tabulator-col-row-handle{
@@ -16,30 +16,31 @@ td{
 /*formats title*/
 #title{
     font-weight: bold;
-    line-height: 40px;
+    line-height: 20px;
 }
 /*formats hr for h1 and h2 to be on same line*/
 hr {
-    clear: both;
-    visibility: hidden;
+    clear: none;
+    visibility: all;
 }
 
 /*formats h1  header for each table*/
 #table_header1 {
-    float: left;
+    /*float: left;*/
+    text-align: center;
+    line-height: 50%;
     display: block;
-    font-size: 1.5em;
-    -webkit-margin-before: 0.83em;
-    -webkit-margin-after: 0.83em;
-    -webkit-margin-start: 0px;
-    -webkit-margin-end: 0px;
+    font-size: 1.75em;
     font-weight: bold;
+    margin-top:50px;
 }
 /*formats h2 to be light font*/
 #table_header2 {
-    float: left;
+    text-align: center;
+    /*float: right;*/
+    line-height: 30%;
     font-weight: lighter;
-    font-size: 1.5em;
+    font-size: 1.0em;
 }
 
 /*formats body for homepage*/

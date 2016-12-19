@@ -14,7 +14,7 @@
 
 <!--Tabulator tables-->
 
-<div id="scope-table-div"> <h1 id="table_header" style="font-size: 2em;"> Scope </h1> </div>
+<div id="scope-table-div"> <h1 id="table_header1" style="font-size: 2em;"> Scope </h1><hr></div>
 <div id="main-table-div"></div>
 
 <script type="text/javascript">
@@ -239,7 +239,7 @@
 
             //populate and create the column cells/data for each table
             for (j = 0; j < releaseamount; j++) { //loop by row
-                main_content += "<h1 id='table_header1'>" + release_versions[j]["summary"] +"</h1>" + "<h2 id='table_header2'>" + " : Go Live "+ release_versions[j]["go_live" ] + "</h2><hr>" ;
+                main_content += "<h1 id='table_header1'>" + release_versions[j]["summary"] +"</h1>" + "<h2 id='table_header2'>" + "Go Live : "+ release_versions[j]["go_live" ] + "</h2><hr>" ;
                 main_content += "<div id='main-table-" + formatted_release_versions[j] + "'" + ">" + "</div>";
                 
             }
