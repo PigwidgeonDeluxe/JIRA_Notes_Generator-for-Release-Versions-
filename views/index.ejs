@@ -9,142 +9,265 @@
     <link href="tabulator.css" rel="stylesheet">
     <script type="text/javascript" src="tabulator.js"></script>
     <link rel="stylesheet" type="text/css" href="globalstyle.css">
-
-    <title>JIRA Notes Table</title>
 </head>
 
-<body>
-    <!--Tabulator table-->
-    <div id="main-table"></div> 
-</body>
+
+<!--Tabulator tables-->
+
+<div id="scope-table-div"> <h1 id="table_header1" style="font-size: 2em;"> Scope </h1><hr></div>
+<div id="main-table-div"></div>
 
 <script type="text/javascript">
     //run script once the document is fully loaded
     $(document).ready(function() {
-        $("#main-table").tabulator({ //define Tabulator
-            pagination:true,
-            fitColumns:false,
-            colMinWidth:40,
-            columns: [ //Define Table Columns //Define columns as percentages to allow for dynamic resizing based on window size 
-                {
-                    title: "ID",
-                    field: "ch_id",
-                    sorter: "string",
-                    align: "center",
-                    formatter: "textarea",
-                    width: "9%"
-                }, {
-                    title: "RFC Name",
-                    field: "rfc_name",
-                    sorter: "string",
-                    align: "center",
-                    formatter: "textarea",
-                    width: "14%"
-                }, {
-                    title: "Request Description",
-                    field: "description",
-                    sorter: "string",
-                    sortable: false,
-                    formatter: "textarea",
-                    width: "38%"
-                }, {
-                    title: "State",
-                    field: "state",
-                    sorter: "string",
-                    align: "center",
-                    formatter: "textarea",
-                    width: "9%",
-                    //set the colours for different priorities
-                    formatter:function(value, data){
-                        if(value == "Requested"){//bright gold
-                            return "<span style='color:#FDD017; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "Declined"){
-                            return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "Approved"){//green apple
-                            return "<span style='color:#4CC417; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "Backlog"){
-                            return "<span style='color:orange; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "Development"){
-                            return "<span style='color:blue; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "QA"){
-                            return "<span style='color:purple; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "Ready for Release"){//pine green
-                            return "<span style='color:#387C44; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "Implemented"){//hazel green
-                            return "<span style='color:#617C58; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else{
-                            return value;
-                        }
-                    }
-                }, {
-                    title: "Priority",
-                    field: "priority",
-                    sorter: "string",
-                    align: "center",
-                    formatter: "textarea",
-                    width: "7%",
-                    //set the colours for different priorities
-                    formatter:function(value, data){
-                        if(value == "Highest"){
-                            return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "High"){
-                            return "<span style='color:#E55451; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "Medium"){
-                            return "<span style='color:orange; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "Low"){
-                            return "<span style='color:green; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else if(value == "Lowest"){
-                            return "<span style='color:#6CBB3C; font-weight:bold;'>" + value + "</span>";
-                        }
-                        else{
-                            return value;
-                        }
-                    }
-                }, {
-                    title: "ImpDate",
-                    field: "impdate",
-                    sorter: "string",
-                    align: "center",
-                    formatter: "textarea",
-                    width: "8%"
-                }, {
-                    title: "Effort",
-                    field: "effort",
-                    sorter: "string",
-                    align: "center",
-                    formatter: "textarea",
-                    width: "6%"
+        //declare and load JSON sent from server
+        var table_data = <%- JSON.stringify(release_data) %>
+        var release_versions = <%- JSON.stringify(releases) %>
+        var releaseamount = release_versions.length;
 
-                }, {
-                    title: "Assignee",
-                    field: "assignee",
-                    sorter: "string",
-                    align: "center",
-                    formatter: "textarea",
-                    width: "8%"
+        //if there are no releases
+        if (releaseamount == 0){
+            //tell user that there are no epics
+            $('#main-table-div').append("<center>No Epics were found.</center>");
+        } else {//if there are releases
+            //define some data from sent json data from nodejs server
+            var formatted_release_versions = [];
+
+            //define Tabulator for main table, specify columns, behaviour, etc
+            var main_table_columns = {
+                fitColumns:false,
+                colMinWidth:80,
+                groupBy:"component",
+                columns: [ //Define Table Columns //Define columns as percentages to allow for dynamic resizing based on window size 
+                    {
+                        title: "ID",
+                        field: "ch_id",
+                        sorter: "string",
+                        align: "center",
+                        formatter:function(value, data){
+                            return "<b>" + value + "</b>"
+                        },
+                        width: "10%"
+                    }, {
+                        title: "RFC Name",
+                        field: "rfc_name",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "34%"
+                    }, {
+                        title: "State",
+                        field: "state",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "12%",
+                        //set the colours for different priorities
+                        formatter:function(value, data){
+                            if(value == "Requested" | value == "To Do"){//bright gold
+                                return "<span style='color:#FDD017; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "Declined"){
+                                return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "Approved"){//green apple
+                                return "<span style='color:#4CC417; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "Backlog"){
+                                return "<span style='color:orange; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "Development" | value == "In Progress"){
+                                return "<span style='color:blue; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "QA"){
+                                return "<span style='color:purple; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "Ready for Release"){//pine green
+                                return "<span style='color:#387C44; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "Implemented" | value == "Done"){//camo green
+                                return "<span style='color:#78866B; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else{
+                                return value;
+                            }
+                        }
+                    }, {
+                        title: "Priority",
+                        field: "priority",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "10%",
+                        //set the colours for different priorities
+                        formatter:function(value, data){
+                            if(value == "Highest"){
+                                return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "High"){
+                                return "<span style='color:#E55451; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "Medium"){
+                                return "<span style='color:orange; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "Low"){
+                                return "<span style='color:green; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else if(value == "Lowest"){
+                                return "<span style='color:#6CBB3C; font-weight:bold;'>" + value + "</span>";
+                            }
+                            else{   
+                                return value;
+                            }
+                        }
+                    }, {
+                        title: "ImpDate",
+                        field: "impdate",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "10%"
+                    }, {
+                        title: "Assignee",
+                        field: "assignee",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "12%"
+                    }, {
+                        title: "Component",
+                        field: "component",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "12%"
+                    },
+                ],
+                rowClick: function(e, id, data, row) { //open the issue for the row when the row is clicked
+                    var data_chid =  data["ch_id"];
+                    window.open("https://ondhdp.atlassian.net/projects/" + data_chid.split("-")[0] + "/issues/" + data_chid);
+
                 },
-            ],
-            rowClick: function(e, id, data, row) { //open the issue for the row when the row is clicked
-                var data_chid =  data["ch_id"].replace(/[<b>]|[</b>]/g, "");
-                window.open("https://ondhdp.atlassian.net/projects/" + data_chid.split("-")[0] + "/issues/" + data_chid);
-            },
-        });
-        //define some data from sent json data from nodejs server
-        var tabledata = <%- JSON.stringify(jsondata) %>
-        //load sample data into the table
-        $("#main-table").tabulator("setData", tabledata);
+            };
+
+            //define Tabulator for scope table
+            var scope_table_columns = {
+                fitColumns:false,
+                colMinWidth:80,
+                columns: [ //Define Table Columns //Define columns as percentages to allow for dynamic resizing based on window size 
+                    {
+                        title: "Scope",
+                        field: "epic",
+                        sorter: "string",
+                        align: "center",
+                        formatter:function(value, data){
+                            return "<b>" + value + "</b>"
+                        },
+                        width: "15%"
+                    },{
+                        title: "Status",
+                        field: "status",
+                        sorter: "string",
+                        align: "center",
+                        formatter:function(value, data){
+                            if(value == "Completed"){
+                                return "<span style='background-color:#78866B; font-weight:bold;'>" + value + "</span>";
+                            } else if(value == "On Track"){
+                                return "<span style='background-color:#4CC417; font-weight:bold;'>" + value + "</span>";
+                            } else if(value == "At Risk"){
+                                return "<span style='background-color:yellow; font-weight:bold;'>" + value + "</span>";
+                            } else if(value == "Issue"){
+                                return "<span style='background-color:red; font-weight:bold;'>" + value + "</span>";
+                            } else {
+                                return value;
+                            }
+                        },
+                        width: "15%"
+                    },{
+                        title: "Go Live",
+                        field: "go_live",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "15%"
+                    },{
+                        title: "Package Date",
+                        field: "duedate",
+                        sorter: "string",
+                        align: "center",
+                        formatter: "textarea",
+                        width: "15%"
+                    },{
+                        title: "Pre-Production Dates",
+                        field: "preprod",
+                        sorter: "string",
+                        align: "center",
+                        formatter:function(value, data){
+                            return value[0] + " - " + value[1]
+                        },
+                        width: "20%"
+                    },{
+                        title: "Production Dates",
+                        field: "prod",
+                        sorter: "string",
+                        align: "center",
+                        formatter:function(value, data){
+                            return value[0] + " - " + value[1]
+                        },
+                        width: "20%"
+                    }
+                ],
+                rowClick: function(e, id, data, row) { //open the issue for the row when the row is clicked
+                    var data_key =  data["key"];
+                    window.open("https://ondhdp.atlassian.net/projects/" + data_key.split("-")[0] + "/issues/" + data_key);
+
+                },
+            }
+
+            //set scope columns
+            $('#scope-table-div').tabulator(scope_table_columns);
+            //add data to scope table
+            $('#scope-table-div').tabulator("setData", release_versions);
+
+
+            //create the main table
+            var main_content = "<table>";
+            //remove spaces and periods
+            for (i = 0; i < releaseamount; i++){
+                formatted_release_versions.push(release_versions[i]["key"].replace(/[ .]/g, "-" ));
+            }
+
+            //populate and create the column cells/data for each table
+            for (j = 0; j <  releaseamount; j++) { //loop by row ; in reverse for smaller to larger number ordering
+                var header_name;
+                if (release_versions[j]["summary"] == release_versions[j]["epic"]){
+                    header_name = release_versions[j]["epic"];
+                } else {
+                    header_name = release_versions[j]["epic"] + " - " + release_versions[j]["summary"];
+                }
+
+                main_content += "<h1 id='table_header1'>" + header_name +"</h1>" + "<h2 id='table_header2'>" + "Go Live : "+ release_versions[j]["go_live" ] + "</h2><hr>" ;
+                main_content += "<div id='main-table-" + formatted_release_versions[j] + "'" + ">" + "</div>";
+                
+            }
+            main_content += "</table>"
+
+
+            //add the main table to the main div created before
+            $('#main-table-div').append(main_content);
+            
+            for (k = 0; k < releaseamount; k++){
+                //initialize the table
+                $("#main-table-" + formatted_release_versions[k]).tabulator(main_table_columns);
+                //load data into the table for current div 
+                $("#main-table-" + formatted_release_versions[k]).tabulator("setData", table_data[release_versions[k]["key"]]);
+
+                //console.log("#main-table-" + formatted_release_versions[k] + table_data[release_versions[k]])
+            }
+        }
+
+
+        
     });
 </script>
 

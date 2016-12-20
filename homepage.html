@@ -2,13 +2,16 @@
 <script src="jquery.min.js"></script>
 <head>
 <link rel="stylesheet" type="text/css" href="globalstyle.css">
-<title>JIRA Notes Generator</title>
+<title>Release Version Management</title>
 </head>
-<body>
+<body id="homepage-body">
     <center>
+
         <!--submission form table-->
         <form id="tableForm" action="/response" onsubmit="return validateForm()"" method="POST" >
-
+                    <header id="title">
+                        Release Version Management
+                    </header><hr>
                 <table>
                     <!-- Clear All button -->
                     <tr>
@@ -29,23 +32,11 @@
                         <td>Project Key (i.e. DCRM):</td>
                         <td> <input type="text" id="pk_query" name="pk_query" style="width: 100%"></td>
                     </tr>
-                    <!--date range-->
-                    <tr>
-                        <td>Date Range:</td>
-                        <td> <input type="text" id="daterange_query" name="daterange_query" style="width: 100%" value="-7d"></td>
-                    </tr>
-                    <!--requested button-->
-                    <tr>
-                        <td>Is Requested:</td>
-                        <td> <input type="checkbox" id="requested_query" name="requested_query" checked></td>
-                    </tr>
 
                 </table>
                 <!--submit button-->
                 <p>
                     <td colspan="3"><input type="submit" class="button" style="height:30px;width:125px" value="Submit"></td>
-                </p>
-                <p style="font-size:85%">(Note: Valid formats for Date Range include: 'yyyy/MM/dd HH:mm', 'yyyy-MM-dd HH:mm', 'yyyy/MM/dd', 'yyyy-MM-dd', or a period format e.g. '-5d', '4w2d'. Leave blank for no range)</td>
                 </p>
 
         </form>
