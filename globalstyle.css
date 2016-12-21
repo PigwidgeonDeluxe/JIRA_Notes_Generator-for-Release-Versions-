@@ -42,7 +42,14 @@ hr {
     font-weight: lighter;
     font-size: 1.0em;
 }
-
+/*formats h3 to be light font*/
+#table_header3 {
+    text-align: center;
+    /*float: right;*/
+    line-height: 30%;
+    font-weight: lighter;
+    font-size: .80em;
+}
 /*formats body for homepage*/
 #homepage-body{
     position: absolute;

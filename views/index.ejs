@@ -9,6 +9,7 @@
     <link href="tabulator.css" rel="stylesheet">
     <script type="text/javascript" src="tabulator.js"></script>
     <link rel="stylesheet" type="text/css" href="globalstyle.css">
+    <title>Release Version Management | Tables</title>
 </head>
 
 
@@ -239,14 +240,23 @@
 
             //populate and create the column cells/data for each table
             for (j = 0; j <  releaseamount; j++) { //loop by row ; in reverse for smaller to larger number ordering
+                var components_set = new Set();
                 var header_name;
                 if (release_versions[j]["summary"] == release_versions[j]["epic"]){
                     header_name = release_versions[j]["epic"];
                 } else {
                     header_name = release_versions[j]["epic"] + " - " + release_versions[j]["summary"];
                 }
+                for (l = 0; l < table_data[release_versions[j]["key"]].length; l++){
+                    components_set.add(table_data[release_versions[j]["key"]][l]["component"]);
+                }
+                var components_array = Array.from(components_set);
+                var components_header = components_array.join(', ');
 
-                main_content += "<h1 id='table_header1'>" + header_name +"</h1>" + "<h2 id='table_header2'>" + "Go Live : "+ release_versions[j]["go_live" ] + "</h2><hr>" ;
+                main_content += "<h1 id='table_header1'>" + header_name +"</h1>";
+                main_content += "<h2 id='table_header2'>"+ "Go Live : "+ release_versions[j]["go_live" ] + "</h2>";
+                main_content += "<h3 id='table_header3'>" + "Components : " + components_header + "</h3>" ;
+                main_content += "<hr>";
                 main_content += "<div id='main-table-" + formatted_release_versions[j] + "'" + ">" + "</div>";
                 
             }
