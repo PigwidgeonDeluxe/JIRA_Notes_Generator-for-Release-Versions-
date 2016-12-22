@@ -242,8 +242,8 @@
             for (j = 0; j <  releaseamount; j++) { //loop by row ; in reverse for smaller to larger number ordering
                 var components_set = new Set();
                 var header_name;
-                if (release_versions[j]["summary"] == release_versions[j]["epic"]){
-                    header_name = release_versions[j]["epic"];
+                if (release_versions[j]["summary"].includes(release_versions[j]["epic"])){
+                    header_name = release_versions[j]["summary"];
                 } else {
                     header_name = release_versions[j]["epic"] + " - " + release_versions[j]["summary"];
                 }
