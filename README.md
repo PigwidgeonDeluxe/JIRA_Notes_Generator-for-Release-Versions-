@@ -1,5 +1,5 @@
 # JIRA_Notes_Generator (for Release Versions using Epics)
-Latest Version: V 0.6.4 - added components header
+Latest Version: V 0.6.5 - changed so that if the epic is in the summary only the summary is displayed as the header
 ## Synopsis
 JIRA Notes Generator is a webapp for viewing release versions on JIRA for a given project.
 
