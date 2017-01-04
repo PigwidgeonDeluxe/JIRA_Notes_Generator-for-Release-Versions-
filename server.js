@@ -225,7 +225,7 @@ app.post('/response', function(req, res, next) {
 
     
 
-    //send the acquired data to the user in the format of the page
+    //send the acquired data to the user with the main page (index.ejs) using ejs 
     function send_data(final_data, err){
         res.render('index.ejs', {
             release_data: table_data,
@@ -272,14 +272,17 @@ function jsonformat(inputjson) {
         } else {
             outputjson[i][col_names[6]] = "N/A";
         }
-        //add the component type
-        for (x = 0; x <  inputjson["issues"][i]["fields"]["components"].length; x++){
-            if (inputjson["issues"][i]["fields"]["components"][0]["name"] != null) {
-                outputjson[i][col_names[7]] = inputjson["issues"][i]["fields"]["components"][0]["name"];
-            } else {
-                outputjson[i][col_names[7]] = "N/A";
+
+        //add the component type[s]; loop through and add each component or set as N/A if there aren't any
+        if (inputjson["issues"][i]["fields"]["components"][0]["name"] != null) {
+            outputjson[i][col_names[7]] = [];
+            for (x = 0; x <  inputjson["issues"][i]["fields"]["components"].length; x++){
+                outputjson[i][col_names[7]].push(inputjson["issues"][i]["fields"]["components"][x]["name"]);
             }
+        } else {
+            outputjson[i][col_names[7]] = "N/A";
         }
+        
 
 
     }
@@ -344,6 +347,7 @@ function month_name(inputdate){
     }
 }
 
+//error handling - UNUSED
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {

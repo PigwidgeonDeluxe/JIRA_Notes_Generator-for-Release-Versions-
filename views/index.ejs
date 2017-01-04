@@ -239,16 +239,26 @@
             }
 
             //populate and create the column cells/data for each table
-            for (j = 0; j <  releaseamount; j++) { //loop by row ; in reverse for smaller to larger number ordering
+            for (j = 0; j <  releaseamount; j++) { //loop by row 
                 var components_set = new Set();
                 var header_name;
-                if (release_versions[j]["summary"].includes(release_versions[j]["epic"])){
+                if (release_versions[j]["summary"].includes(release_versions[j]["epic"])){ //if the summary includes the epic name
                     header_name = release_versions[j]["summary"];
                 } else {
                     header_name = release_versions[j]["epic"] + " - " + release_versions[j]["summary"];
                 }
+                //create list for components in an Epic; loop through each key/issue
                 for (l = 0; l < table_data[release_versions[j]["key"]].length; l++){
-                    components_set.add(table_data[release_versions[j]["key"]][l]["component"]);
+                    //if the key has multiple components, loop through them
+                    if (Array.isArray(table_data[release_versions[j]["key"]][l]["component"])){
+                        for (x in table_data[release_versions[j]["key"]][l]["component"]){
+                            components_set.add(table_data[release_versions[j]["key"]][l]["component"][x])
+                        }
+                        table_data[release_versions[j]["key"]][l]["component"] = (table_data[release_versions[j]["key"]][l]["component"].toString()).replace(/,/g, ", " );
+                    } else {
+                        components_set.add(table_data[release_versions[j]["key"]][l]["component"]);
+                    }
+                    
                 }
                 var components_array = Array.from(components_set);
                 var components_header = components_array.join(', ');
