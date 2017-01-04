@@ -35,3 +35,12 @@ This webapp was built with Tabulator using a custom CSS theme (borderless). The 
 
 ## License
 This project is licensed under the MIT license. Refer to LICENSE.md for details.
+
+
+##Screenshots
+***
+###Login Page
+![Login Page](https://github.com/PigwidgeonDeluxe/JIRA_Release_Notes_Generator/blob/master/jira%20release%20note%20generator%20login.png)
+###Main Page
+![Main Page](https://github.com/PigwidgeonDeluxe/JIRA_Release_Notes_Generator/blob/master/jira%20release%20note%20generator%20table.png)
+***
