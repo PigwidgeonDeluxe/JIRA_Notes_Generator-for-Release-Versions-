@@ -1,5 +1,5 @@
 # JIRA_Notes_Generator (for Release Versions using Epics)
-Latest Version: V 0.6.6 - added functionality and formatting for multiple components (per issue)
+Latest Version: V 0.6.7 - fixed ordering by Priority and ID
 ## Synopsis
 JIRA Notes Generator is a webapp for viewing release versions on JIRA for a given project.
 
