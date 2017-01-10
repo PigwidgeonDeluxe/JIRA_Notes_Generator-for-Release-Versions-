@@ -43,7 +43,9 @@
                     {
                         title: "ID",
                         field: "ch_id",
-                        sorter: "string",
+                        sorter: function(a, b, aData, bData){//custom sort by priority value; convert to number, then return difference,
+                            return (a.split("-")[1] - b.split("-")[1]);
+                        },
                         align: "center",
                         formatter:function(value, data){
                             return "<b>" + value + "</b>"
@@ -96,7 +98,33 @@
                     }, {
                         title: "Priority",
                         field: "priority",
-                        sorter: "string",
+                        sorter: function(a, b, aData, bData){//custom sort by priority value; convert to number, then return difference
+
+                            if (a == "Highest"){
+                                a = "1";
+                            } else if (a == "High"){
+                                a = "2";
+                            } else if (a == "Medium"){
+                                a = "3";
+                            } else if (a == "Low"){
+                                a = "4";
+                            } else if (a == "Lowest"){
+                                a = "5";
+                            }
+
+                            if (b == "Highest"){
+                                b = "1";
+                            } else if (b == "High"){
+                                b = "2";
+                            } else if (b == "Medium"){
+                                b = "3";
+                            } else if (b == "Low"){
+                                b = "4";
+                            } else if (b == "Lowest"){
+                                b = "5";
+                            }
+                            return a - b;
+                        },
                         align: "center",
                         formatter: "textarea",
                         width: "10%",
@@ -170,6 +198,7 @@
                         field: "status",
                         sorter: "string",
                         align: "center",
+                        //set different colours for different values
                         formatter:function(value, data){
                             if(value == "Completed"){
                                 return "<span style='background-color:#78866B; font-weight:bold;'>" + value + "</span>";
@@ -271,7 +300,6 @@
                 
             }
             main_content += "</table>"
-
 
             //add the main table to the main div created before
             $('#main-table-div').append(main_content);
