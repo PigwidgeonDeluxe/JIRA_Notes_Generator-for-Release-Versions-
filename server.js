@@ -356,6 +356,7 @@ app.use(function(err, req, res, next) {
     });
 });
 
+//load server-config.json to get setting for port
 fs.readFile('server-conf.json', 'utf8', function(err, data){
     if (err) {
         console.log("Configuration file server-conf.json' not found. Using default port 8081.");
