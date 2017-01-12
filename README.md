@@ -43,7 +43,6 @@ This project is licensed under the MIT license. Refer to LICENSE.md for details.
 ![Login Page](https://github.com/PigwidgeonDeluxe/JIRA_Release_Notes_Generator/blob/master/jira%20release%20note%20generator%20login.png)
 ###Main Page
 ![Main Page](https://github.com/PigwidgeonDeluxe/JIRA_Release_Notes_Generator/blob/master/jira%20release%20note%20generator%20table.png)
-***
 ###File Directory Example
 ![File Directory Example](https://github.com/PigwidgeonDeluxe/JIRA_Release_Notes_Generator/blob/master/file%20directory%20example.png)
 ***
