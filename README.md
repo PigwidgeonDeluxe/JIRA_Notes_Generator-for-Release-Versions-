@@ -6,6 +6,10 @@ JIRA Release Notes Generator is a webapp for viewing release versions on JIRA fo
 ## Motivation
 This webapp was created to fulfill the need of creating tables for release version meeting notes.
 
+## Note
+This webapp does not have https for communication between the webapp and the user. This webapp only uses https for communicating with JIRA. 
+As such, it is recommended only to use this webapp on a trusted secure network, or on the user's computer.
+
 ## Prerequisites
 #### This webapp requires:
 - npm
