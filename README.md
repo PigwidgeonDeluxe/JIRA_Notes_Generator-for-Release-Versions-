@@ -40,9 +40,9 @@ This project is licensed under the MIT license. Refer to LICENSE.md for details.
 ##Screenshots
 ***
 ###Login Page
-![Login Page](JIRA_Release_Notes_Generator/screenshots/jira release note generator login.png)
+![Login Page](screenshots/jira release note generator login.png)
 ###Main Page
-![Main Page](JIRA_Release_Notes_Generator/screenshots/jira release note generator table.png)
+![Main Page](screenshots/jira release note generator table.png)
 ###File Directory Example
-![File Directory Example](JIRA_Release_Notes_Generator/screenshots/file directory example.png)
+![File Directory Example](screenshots/file directory example.png)
 ***
