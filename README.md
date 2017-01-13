@@ -1,5 +1,5 @@
 # JIRA Release Notes Generator (using Epics)
-Latest Version: V 0.6.8 - added server configuration file (server-conf.json) to allow setting of port number
+Latest Version: V 0.6.9 - removed unused 'err'
 ## Synopsis
 JIRA Release Notes Generator is a webapp for viewing release versions on JIRA for a given project.
 
@@ -40,9 +40,9 @@ This project is licensed under the MIT license. Refer to LICENSE.md for details.
 ##Screenshots
 ***
 ###Login Page
-![Login Page](https://github.com/PigwidgeonDeluxe/JIRA_Release_Notes_Generator/blob/master/jira%20release%20note%20generator%20login.png)
+![Login Page](JIRA_Release_Notes_Generator/screenshots/jira release note generator login.png)
 ###Main Page
-![Main Page](https://github.com/PigwidgeonDeluxe/JIRA_Release_Notes_Generator/blob/master/jira%20release%20note%20generator%20table.png)
+![Main Page](JIRA_Release_Notes_Generator/screenshots/jira release note generator table.png)
 ###File Directory Example
-![File Directory Example](https://github.com/PigwidgeonDeluxe/JIRA_Release_Notes_Generator/blob/master/file%20directory%20example.png)
+![File Directory Example](JIRA_Release_Notes_Generator/screenshots/file directory example.png)
 ***
