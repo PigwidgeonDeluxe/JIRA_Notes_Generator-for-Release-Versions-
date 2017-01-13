@@ -106,7 +106,7 @@ app.post('/response', function(req, res, next) {
 
     /// callback functions ///
 
-    project_callback = function(response, err) {
+    project_callback = function(response /*, err*/) {
         var body = '';
         //another chunk of data has been recieved, so append it to `body`
         response.on('data', function(chunk) {
@@ -131,11 +131,11 @@ app.post('/response', function(req, res, next) {
             data_acquire();
         })
 
-        if (err) {return next(err);}
+        //if (err) {return next(err);}
     }
 
     //first part of a recursive function that retrieves the data for all the versions
-    function table_data_retrieval(response, i, err){
+    function table_data_retrieval(response, i /*, err*/){
 
         //specify options for table data retrieval
         var table_options = {
@@ -158,11 +158,11 @@ app.post('/response', function(req, res, next) {
             //console.log(table_data);
         }
 
-        if (err) {return next(err);}
+        //if (err) {return next(err);}
     }
 
     //second part of a recursive function that retrieves data for the current version being recursed
-    function request_tabledata(response, table_options, i, err){
+    function request_tabledata(response, table_options, i /*, err*/){
         var parsedbody;
         //create a path for each different version
         table_options['path'] = "https://ondhdp.atlassian.net/rest/api/2/search?jql=%22Epic%20Link%22%20=%20" + release_epics[i]["key"];
@@ -193,46 +193,50 @@ app.post('/response', function(req, res, next) {
         }
 
         //perform GET request for getting project id
-        https.get(table_options, table_callback).on('error', (err) => {
+        var req = https.get(table_options, table_callback)
+
+        req.on('error', (err) => {
             console.log(err);
             res.send(err);
         })
         
-        if (err) {return next(err);}
+        //if (err) {return next(err);}
     }
 
 
     ///acquisition functions/// -- created for sequential execution and formatting
 
-    function release_acquire(err) {
+    function release_acquire(/*err*/) {
         
         //perform GET request to get projects release versions catch any errors and print them
-        https.get(project_options, project_callback).on('error', (err) => {
+        var req = https.get(project_options, project_callback)
+
+        req.on('error', (err) => {
             console.log(err);
             res.send(err);
         });
-
-        if (err) {return next(err);}
+        
+        //if (err) {return next(err);}
     }
 
-    function data_acquire(response, err) {
+    function data_acquire(response /*, err*/) {
 
         //get the data for each version
         table_data_retrieval(response, 0);
 
-        if (err) {return next(err);}
+        //if (err) {return next(err);}
     }
 
     
 
     //send the acquired data to the user with the main page (index.ejs) using ejs 
-    function send_data(final_data, err){
+    function send_data(final_data /*, err*/){
         res.render('index.ejs', {
             release_data: table_data,
             releases: release_epics
         });
 
-        if (err) {return next(err);}
+        //if (err) {return next(err);}
     }
 
 
