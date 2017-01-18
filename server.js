@@ -97,7 +97,7 @@ app.post('/response', function(req, res, next) {
         project_key: req.body.pk_query
     };
 
-    //url for getting all Epics
+    //url for getting all Epics //sorts by ASCending
     var project_options = {
         host: 'ondhdp.atlassian.net',
         path: "https://ondhdp.atlassian.net/rest/api/2/search?jql=issuetype=Epic%20AND%20project=" + user_response["project_key"] + "%20ORDER%20BY%20%27Epic%20Name%27%20ASC",
