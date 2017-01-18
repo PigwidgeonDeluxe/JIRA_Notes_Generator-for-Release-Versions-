@@ -28,7 +28,7 @@ hr {
 #table_header1 {
     /*float: left;*/
     text-align: center;
-    line-height: 50%;
+    line-height: 85%;
     display: block;
     font-size: 1.75em;
     font-weight: bold;
@@ -46,7 +46,7 @@ hr {
 #table_header3 {
     text-align: center;
     /*float: right;*/
-    line-height: 30%;
+    line-height: 88%;
     font-weight: lighter;
     font-size: .80em;
 }
