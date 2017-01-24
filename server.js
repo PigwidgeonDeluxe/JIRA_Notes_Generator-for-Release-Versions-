@@ -97,10 +97,10 @@ app.post('/response', function(req, res, next) {
         project_key: req.body.pk_query
     };
 
-    //url for getting all Epics //sorts by ASCending
+    //url for getting all Epics //sorts by ASCending and filters by issues that have a production end date in the last seven days and later, or null
     var project_options = {
         host: 'ondhdp.atlassian.net',
-        path: "https://ondhdp.atlassian.net/rest/api/2/search?jql=issuetype=Epic%20AND%20project=" + user_response["project_key"] + "%20ORDER%20BY%20%27Epic%20Name%27%20ASC",
+        path: "https://ondhdp.atlassian.net/rest/api/2/search?jql=issuetype=Epic%20AND%20project=" + user_response["project_key"] + '%20AND%20issuetype%3DEpic%20AND%20("Production%20End%20Date"%20>%3D%20-7d%20OR%20"Production%20End%20Date"%20%3D%20null)%20ORDER%20BY%20%27Epic%20Name%27%20ASC',
         auth: user_response["username"] + ":" + user_response["password"]
     };
 
