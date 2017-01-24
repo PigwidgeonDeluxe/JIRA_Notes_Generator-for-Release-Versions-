@@ -1,5 +1,5 @@
 # JIRA Release Notes Generator (using Epics)
-Latest Version: V 0.6.9 - removed unused 'err'
+Latest Version: V 0.7.0 - added filtering to show only issues that have a production end date in the last seven days and later, or null
 ## Synopsis
 JIRA Release Notes Generator is a webapp for viewing release versions on JIRA for a given project.
 
