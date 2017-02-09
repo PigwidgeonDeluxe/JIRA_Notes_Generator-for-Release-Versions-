@@ -259,7 +259,7 @@ function jsonformat(inputjson) {
         //add change id to current array
         outputjson[i][col_names[1]] = inputjson["issues"][i]["key"];
         //add rfc_name to current array
-        outputjson[i][col_names[2]] = inputjson["issues"][i]["fields"]["summary"];
+        outputjson[i][col_names[2]] = '<center><td valign="top">' + inputjson["issues"][i]["fields"]["summary"] + "</td></center>";
         //add state to current array
         outputjson[i][col_names[3]] = inputjson["issues"][i]["fields"]["status"]["name"];
         //add priority to current array
