@@ -347,7 +347,7 @@ function month_name(inputdate){
         input_array = inputdate.split("-");
         return input_array[0] + "-" + month_names[input_array[1] - 1] + "-" + input_array[2]
     } else {
-        return "N/A";
+        return " &ndash; ";
     }
 }
 
