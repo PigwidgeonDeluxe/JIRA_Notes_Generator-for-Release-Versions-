@@ -216,14 +216,28 @@
                         field: "go_live",
                         sorter: "string",
                         align: "center",
-                        formatter: "textarea",
+                        formatter:function(value, data){
+                        	if (value == "N/A"){
+                        		return " – "
+                        	} else {
+                        		return value
+                        	}
+                            
+                        },
                         width: "15%"
                     },{
                         title: "Package Date",
                         field: "duedate",
                         sorter: "string",
                         align: "center",
-                        formatter: "textarea",
+                        formatter:function(value, data){
+                        	if (value == "N/A"){
+                        		return " – "
+                        	} else {
+                        		return value
+                        	}
+                            
+                        },
                         width: "15%"
                     },{
                         title: "Pre-Production Dates",
@@ -231,6 +245,12 @@
                         sorter: "string",
                         align: "center",
                         formatter:function(value, data){
+                        	if (value[0] == "N/A"){
+                        		value[0] = " "
+                        	}
+                        	if (value[1] == "N/A"){
+                        		value[1] = " "
+                        	}
                             return value[0] + " - " + value[1]
                         },
                         width: "20%"
@@ -240,6 +260,12 @@
                         sorter: "string",
                         align: "center",
                         formatter:function(value, data){
+                        	if (value[0] == "N/A"){
+                        		value[0] = " "
+                        	}
+                        	if (value[1] == "N/A"){
+                        		value[1] = " "
+                        	}
                             return value[0] + " - " + value[1]
                         },
                         width: "20%"
