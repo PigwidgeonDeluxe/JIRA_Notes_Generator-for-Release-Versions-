@@ -1,5 +1,5 @@
 # JIRA Release Notes Generator (using Epics)
-Latest Version: V 0.7.1 - added center formatting to rfc_name column data
+Latest Version: V 0.7.1 - added center formatting to rfc_name column data and colours for Scope
 ## Synopsis
 JIRA Release Notes Generator is a webapp for viewing release versions on JIRA for a given project.
 
