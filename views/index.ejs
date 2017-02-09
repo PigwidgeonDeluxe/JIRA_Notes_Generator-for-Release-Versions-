@@ -201,11 +201,11 @@
                         //set different colours for different values
                         formatter:function(value, data){
                             if(value == "Closed"){
-                                return "<span style='background-color:#78866B; font-weight:bold;'>" + value + "</span>";
+                                return "<span style='color:#78866B; font-weight:bold;'>" + value + "</span>";
                             } else if(value == "In Progress" | value == "Implemented" | value == "Cancelled	"){
-                                return "<span style='background-color:#4CC417; font-weight:bold;'>" + value + "</span>";
+                                return "<span style='color:#4CC417; font-weight:bold;'>" + value + "</span>";
                             } else if(value == "Requested"){
-                                return "<span style='background-color:yellow; font-weight:bold;'>" + value + "</span>";
+                                return "<span style='color:yellow; font-weight:bold;'>" + value + "</span>";
                             } else {
                                 return value;
                             }
