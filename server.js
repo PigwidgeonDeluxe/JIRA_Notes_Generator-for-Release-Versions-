@@ -100,7 +100,7 @@ app.post('/response', function(req, res, next) {
     //url for getting all Epics //sorts by ASCending and filters by issues that have a production end date in the last seven days and later, or null
     var project_options = {
         host: 'ondhdp.atlassian.net',
-        path: "https://ondhdp.atlassian.net/rest/api/2/search?jql=issuetype=Epic%20AND%20project=" + user_response["project_key"] + '%20AND%20issuetype%3DEpic%20AND%20("Production%20End%20Date"%20>%3D%20-7d%20OR%20"Production%20End%20Date"%20%3D%20null)%20AND%20(cf%5B11702%5D%20%3D%20null%20)%20ORDER%20BY%20%27Epic%20Name%27%20ASC',
+        path: "https://ondhdp.atlassian.net/rest/api/2/search?jql=issuetype=Epic%20AND%20project=" + user_response["project_key"] + '%20AND%20issuetype%3DEpic%20AND%20("Production%20End%20Date"%20>%3D%20-7d%20OR%20"Production%20End%20Date"%20%3D%20null)%20ORDER%20BY%20%27Epic%20Name%27%20ASC',
         auth: user_response["username"] + ":" + user_response["password"]
     };
 
@@ -278,15 +278,18 @@ function jsonformat(inputjson) {
         }
 
         //add the component type[s]; loop through and add each component or set as N/A if there aren't any
-        if (inputjson["issues"][i]["fields"]["components"][0]["name"] != null) {
-            outputjson[i][col_names[7]] = [];
-            for (x = 0; x <  inputjson["issues"][i]["fields"]["components"].length; x++){
-                outputjson[i][col_names[7]].push(inputjson["issues"][i]["fields"]["components"][x]["name"]);
+        if (inputjson["issues"][i]["fields"]["components"].length != 0){
+            if (inputjson["issues"][i]["fields"]["components"][0]["name"] != null ) {
+                outputjson[i][col_names[7]] = [];
+                for (x = 0; x <  inputjson["issues"][i]["fields"]["components"].length; x++){
+                    outputjson[i][col_names[7]].push(inputjson["issues"][i]["fields"]["components"][x]["name"]);
+                }
+            } else {
+                outputjson[i][col_names[7]] = "N/A";
             }
         } else {
-            outputjson[i][col_names[7]] = "N/A";
-        }
-        
+                outputjson[i][col_names[7]] = "N/A";
+            }
 
 
     }
