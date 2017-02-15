@@ -1,5 +1,5 @@
 # JIRA Release Notes Generator (using Epics)
-Latest Version: V 0.7.2 - Added filtering to filter out Training
+Latest Version: V 0.7.3 - Fixed error when components list is empty
 ## Synopsis
 JIRA Release Notes Generator is a webapp for viewing release versions on JIRA for a given project.
 
