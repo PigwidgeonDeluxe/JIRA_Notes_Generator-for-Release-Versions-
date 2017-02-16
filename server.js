@@ -7,6 +7,7 @@ var ejs = require('ejs');
 //global variables
 var formattedjson;
 var release_epics;
+var issuelinks_state;
 var table_data = {};
 //var for column names; allows for easier column addition but jsonformat still needs to be edited
 var col_names = ["id", "ch_id", "rfc_name", "state", "priority", "impdate", "assignee", "component"];
@@ -72,19 +73,6 @@ app.get('/ejs.js', function(req, res) {
 app.get('/', function(req, res) {
     //send homepage
     res.sendFile(__dirname + "/" + "homepage.html");
-})
-
-//page for printing
-app.get('/printpage', function(req, res) {
-    //res.end(JSON.stringify(formattedjson));
-    //send the JSON along with the table ejs
-
-    res.render('printable.ejs', {
-        jsondata: formattedjson,
-        columns: {
-            col: col_names
-        }
-    });
 })
 
 //request the page
@@ -164,8 +152,19 @@ app.post('/response', function(req, res, next) {
     //second part of a recursive function that retrieves data for the current version being recursed
     function request_tabledata(response, table_options, i /*, err*/){
         var parsedbody;
+
+        //check if the current issue has issue links
+        if (release_epics[i]["issuelinks"] == true){
+        	//search for linked issues instead of by epic link
+        	jql_search = "issue%20in%20linkedIssues(" + release_epics[i]["key"] + ")";
+        	console.log("Epic has issuelinks")
+        } else if (release_epics[i]["issuelinks"] == false){
+        	jql_search = "%22Epic%20Link%22%20=%20" + release_epics[i]["key"]; 
+        	console.log("Epic does not have issuelinks")
+        }
+
         //create a path for each different version
-        table_options['path'] = "https://ondhdp.atlassian.net/rest/api/2/search?jql=%22Epic%20Link%22%20=%20" + release_epics[i]["key"];
+        table_options['path'] = "https://ondhdp.atlassian.net/rest/api/2/search?jql=" + jql_search;
 
         table_callback = function(response){
 
@@ -247,6 +246,7 @@ release_acquire();
 
 //function that takes the JIRA JSON, then takes and formats the data for the table
 function jsonformat(inputjson) {
+
     //create new list for final json output
     var outputjson = [];
     //loop for all issues
@@ -321,6 +321,15 @@ function epic_data(parsedbody) {
             var preprod_end = month_name(parsedbody[i]["fields"]["customfield_11301"]).replace(/-/g,' ');
             var prod_start = month_name(parsedbody[i]["fields"]["customfield_11302"]).replace(/-/g,' ');
             var prod_end = month_name(parsedbody[i]["fields"]["customfield_11303"]).replace(/-/g,' ');
+
+            //check to see if the current epic has issue links
+            if (parsedbody[i]["fields"]["issuelinks"].length == 0){
+            	//if the current issue has issue links
+            	issuelinks_state = false
+            } else {
+            	issuelinks_state = true
+            }
+
             //add the key and version name to the name list
             data_list.push({"key":parsedbody[i]["key"], 
                 "summary":parsedbody[i]["fields"]["summary"],
@@ -330,6 +339,7 @@ function epic_data(parsedbody) {
                 "prod":[prod_start, prod_end],
                 "duedate":month_name(parsedbody[i]["fields"]["duedate"]).replace(/-/g,' '),
                 "status":parsedbody[i]["fields"]["status"]["name"],
+                "issuelinks":issuelinks_state
             });
         }
         return data_list;
