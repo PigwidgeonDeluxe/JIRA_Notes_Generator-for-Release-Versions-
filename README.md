@@ -28,10 +28,10 @@ As such, it is recommended only to use this webapp on a trusted secure network, 
 2. Run the webapp from a command prompt or terminal; open cmd/terminal, cd  to the webapp directory, and start the webapp using "node server.js" (without quotes).
 3. The webapp should start on localhost port 8081 (localhost:8081). A different address can be specified by editing the server configuration file "server-conf.json", and may have to be altered if the default port is already taken. The webapp is tailored for a specific JIRA so custom fields may differ from other JIRAs.
 
-##Troubleshooting Tips
-###ETIMEDOUT
+## Troubleshooting Tips
+### ETIMEDOUT
 This means that the webapp was unable to connect to the JIRA API. Doublecheck the webapp's internet connection to see if there are any proxies or firewalls blocking the connection.
-###JSON.parse error
+### JSON.parse error
 This means that the returned JSON from JIRA was invalid. This usually means that the username or password you entered was incorrect. The least common reason would be an incorrect URL should the JIRA API ever be changed.
 
 ## Built With
@@ -41,12 +41,12 @@ This webapp was built with Tabulator using a custom CSS theme (borderless). The 
 This project is licensed under the MIT license. Refer to LICENSE.md for details.
 
 
-##Screenshots
+## Screenshots
 ***
-###Login Page
-![Login Page](screenshots/jira release note generator login.png)
-###Main Page
-![Main Page](screenshots/jira release note generator table.png)
-###File Directory Example
-![File Directory Example](screenshots/file directory example.png)
+### Login Page
+![Login Page](screenshots/jira%20release%20note%20generator%20login.png)
+### Main Page
+![Main Page](screenshots/jira%20release%20note%20generator%20table.png)
+### File Directory Example
+![File Directory Example](screenshots/file%20directory%20example.png)
 ***
