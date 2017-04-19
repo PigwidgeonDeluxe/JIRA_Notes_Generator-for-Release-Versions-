@@ -26,7 +26,7 @@ As such, it is recommended only to use this webapp on a trusted secure network, 
 0. Download node.js and npm; go to https://nodejs.org/en/ to download Node.js and https://nodejs.org/en/download/ to download npm. Administrator privileges will be required.
 1. Download the webapp and install the prerequisites; use the "install" command in npm (or extract node_modules.zip) and extract the archive named jquery-ui-1.12.1 to its respectively named folder.
 2. Run the webapp from a command prompt or terminal; open cmd/terminal, cd  to the webapp directory, and start the webapp using "node server.js" (without quotes).
-3. The webapp should start on localhost port 8081 (localhost:8081). A different address can be specified by editing the server configuration file "server-conf.json", and may have to be altered if the default port is already taken. The webapp is tailored for a specific JIRA so custom fields may differ from other JIRAs.
+3. A JIRA host url will have to be specified in the server-conf file. The webapp should start on localhost port 8081 (localhost:8081). A different address can be specified by editing the server configuration file (server-conf.json), and may have to be altered if the default port is already taken. The webapp is tailored for a specific JIRA so custom fields may differ from other JIRAs.
 
 ## Troubleshooting Tips
 ### ETIMEDOUT
