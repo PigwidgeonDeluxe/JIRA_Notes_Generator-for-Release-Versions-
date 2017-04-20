@@ -5,6 +5,7 @@ var fs = require('fs');
 var bodyParser = require('body-parser');
 var ejs = require('ejs');
 //global variables
+var settings_jira_host 
 var formattedjson;
 var release_epics;
 var issuelinks_state;
@@ -382,7 +383,7 @@ fs.readFile('server-conf.json', 'utf8', function(err, data){
     } else {
         var parsedsettings = parse_body(data);
         var settings_port = parsedsettings["port"];
-        var settings_jira_host = parsedsettings["jira_host"];
+        settings_jira_host = parsedsettings["jira_host"];
     } 
     //start server at given port
     var server = app.listen(settings_port, function() {
