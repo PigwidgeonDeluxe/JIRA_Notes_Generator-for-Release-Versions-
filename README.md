@@ -1,4 +1,4 @@
-# JIRA Release Notes Generator (using Epics)
+# JIRA Release Notes Generator (using Epics) - Releases Management
 Latest Version: V 0.7.5 - JIRA host can now be set from server-conf.
 ## Synopsis
 JIRA Release Notes Generator is a webapp for viewing release versions on JIRA for a given project.
